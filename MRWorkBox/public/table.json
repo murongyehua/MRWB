@@ -1,0 +1,16 @@
+{
+    "list": [{
+            "id": 1,
+            "channelName": "工商银行",
+            "channelCode": "102",
+            "activeStateText": "启用"
+        },
+        {
+            "id": 2,
+            "channelName": "农业银行",
+            "channelCode": "103",
+            "activeStateText": "停用"
+        }
+    ],
+    "pageTotal": 2
+}
