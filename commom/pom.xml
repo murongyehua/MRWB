@@ -9,14 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>base</artifactId>
+    <artifactId>commom</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.murongyehua</groupId>
-            <artifactId>commom</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 
 </project>
