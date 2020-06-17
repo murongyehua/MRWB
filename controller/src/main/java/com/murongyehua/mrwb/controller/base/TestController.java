@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    @PostMapping("/test.do")
+    @PostMapping("/test.pub")
     public String test() {
         return "test success!";
     }

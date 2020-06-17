@@ -23,7 +23,7 @@ public class UserContextInterceptor extends HandlerInterceptorAdapter {
 
     private static final String NOT_LOG_IN_MESSAGE = "未登录";
 
-    private static final String INTERCEPTOR_OPER = ".do";
+    private static final String INTERCEPTOR_OPER = ".pub";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -36,7 +36,8 @@ public class UserContextInterceptor extends HandlerInterceptorAdapter {
 
         UserInfo userInfo = (UserInfo) request.getSession().getAttribute(UserContext.USER_SESSION);
         if (userInfo == null) {
-            if (servletPath.contains(INTERCEPTOR_OPER)) {
+            // 只有.pub放行，其他全部拦截
+            if (!servletPath.contains(INTERCEPTOR_OPER)) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("code", "2");
                 jsonObject.put("success", false);
