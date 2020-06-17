@@ -2,6 +2,8 @@ package com.murongyehua.mrwb.base.dao.mapper;
 
 import com.murongyehua.mrwb.base.dao.po.BaseUserInfoPO;
 
+import java.util.List;
+
 public interface BaseUserInfoMapper {
     int deleteByPrimaryKey(String id);
 
@@ -14,4 +16,6 @@ public interface BaseUserInfoMapper {
     int updateByPrimaryKeySelective(BaseUserInfoPO record);
 
     int updateByPrimaryKey(BaseUserInfoPO record);
+
+    List<BaseUserInfoPO> selectBySelective(BaseUserInfoPO userInfo);
 }

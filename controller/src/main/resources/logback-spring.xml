@@ -53,12 +53,12 @@
     </root>
 
     <!-- sql打印 -->
-    <!--<logger name="com.fingard.gardpay.reconciliation.mapper" level="${sql.level}"/>-->
+    <logger name="com.fingard.gardpay.reconciliation.mapper" level="${sql.level}"/>
 
-    <!--<logger name="com.fingard.gardpay.reconciliation.mapper.reconbankdetail" level="${sql.level}"/>
+    <logger name="com.fingard.gardpay.reconciliation.mapper.reconbankdetail" level="${sql.level}"/>
     <logger name="com.fingard.gardpay.reconciliation.mapper.reconfile" level="${sql.level}"/>
     <logger name="com.fingard.gardpay.reconciliation.mapper.reconrefund" level="${sql.level}"/>
     <logger name="com.fingard.gardpay.reconciliation.mapper.reconreceipt" level="${sql.level}"/>
-    <logger name="com.fingard.gardpay.reconciliation.mapper.reconrhf" level="${sql.level}"/>-->
+    <logger name="com.fingard.gardpay.reconciliation.mapper.reconrhf" level="${sql.level}"/>
 
 </configuration>

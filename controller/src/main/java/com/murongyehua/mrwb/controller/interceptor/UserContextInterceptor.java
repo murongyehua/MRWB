@@ -1,6 +1,7 @@
 package com.murongyehua.mrwb.controller.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
+import com.murongyehua.mrwb.commom.enums.ENUserType;
 import com.murongyehua.mrwb.commom.user.UserContext;
 import com.murongyehua.mrwb.commom.user.UserInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,12 @@ public class UserContextInterceptor extends HandlerInterceptorAdapter {
 
     private static final String NOT_LOG_IN_MESSAGE = "未登录";
 
+    private static final String NOT_RIGHT_MESSAGE = "无权限";
+
     private static final String INTERCEPTOR_OPER = ".pub";
+
+    private static final String SYSTEM_MANAGER_OPER = ".smg";
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -36,20 +42,30 @@ public class UserContextInterceptor extends HandlerInterceptorAdapter {
 
         UserInfo userInfo = (UserInfo) request.getSession().getAttribute(UserContext.USER_SESSION);
         if (userInfo == null) {
-            // 只有.pub放行，其他全部拦截
+            // 未登录时只有.pub放行，其他全部拦截
             if (!servletPath.contains(INTERCEPTOR_OPER)) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("code", "2");
-                jsonObject.put("success", false);
-                jsonObject.put("info", NOT_LOG_IN_MESSAGE);
                 response.setContentType("application/json");
-                response.getWriter().write(jsonObject.toJSONString());
+                response.getWriter().write(getErrorReturn(NOT_LOG_IN_MESSAGE).toJSONString());
                 return false;
             }
         } else {
-            log.info("用户登录: [{}]", userInfo.getNickName());
+            log.info("当前用户: [{}]", userInfo.getNickname());
+            // .smg只有系统管理员放行
+            if (servletPath.contains(SYSTEM_MANAGER_OPER) && !ENUserType.MANAGER.getValue().equals(userInfo.getUserType())) {
+                response.setContentType("application/json");
+                response.getWriter().write(getErrorReturn(NOT_RIGHT_MESSAGE).toJSONString());
+                return false;
+            }
             UserContext.setUserInfo(userInfo);
         }
         return true;
+    }
+
+    private JSONObject getErrorReturn(String message) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", "2");
+        jsonObject.put("success", false);
+        jsonObject.put("info", message);
+        return jsonObject;
     }
 }
