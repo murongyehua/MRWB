@@ -72,7 +72,9 @@ public class UserInfoServiceImpl implements UserInfoService {
         request.getSession().setAttribute(UserContext.USER_SESSION, userInfo);
         user.setLastLoginTime(new Date());
         userInfoMapper.updateByPrimaryKey(user);
-        return ResultContext.success("登录成功");
+        ResultContext resultContext = ResultContext.success("登录成功");
+        resultContext.setData(user);
+        return resultContext;
     }
 
     private boolean isUserExist(BaseUserInfoPO userInfoPO) {

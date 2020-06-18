@@ -6,7 +6,7 @@
                     <div class="user-info">
                         <img src="../../assets/img/img.jpg" class="user-avator" alt />
                         <div class="user-info-cont">
-                            <div class="user-info-name">{{name}}</div>
+                            <div class="user-info-name">{{nickname}}</div>
                             <div>{{role}}</div>
                         </div>
                     </div>
@@ -57,7 +57,8 @@ export default {
     name: 'dashboard',
     data() {
         return {
-            name: localStorage.getItem('ms_username'),
+            nickname: '',
+            userType: ''
         };
     },
     components: {
@@ -65,8 +66,14 @@ export default {
     },
     computed: {
         role() {
-            return this.name === 'admin' ? '超级管理员' : '普通用户';
+            return this.userType === '1' ? '系统管理员' : '普通用户';
         }
+    },
+    mounted() {
+        let userInfoStr = localStorage.getItem('ms_username')
+        let userInfo = JSON.parse(userInfoStr)
+        this.userType = userInfo.userType
+        this.nickname = userInfo.nickname
     },
     methods: {
         changeDate() {

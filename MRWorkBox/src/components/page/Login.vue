@@ -45,13 +45,18 @@ export default {
         submitForm() {
             this.$refs.login.validate(valid => {
                 if (valid) {
-                    if (this.param.username === 'temp' && this.param.password === 'lcx@123456') {
-                        this.$message.success('登录成功');
-                        localStorage.setItem('ms_username', this.param.username);
-                        this.$router.push('/dashboard');
-                    }else {
-                        this.$message.error('用户名或密码错误');
+                    let data = {
+                        username: this.param.username,
+                        password: this.param.password
                     }
+                    this.API.userLogin(data).then(res => {
+                        if (res.code === '0') {
+                            this.$message.success('登录成功');
+                            localStorage.setItem('ms_username', JSON.stringify(res.data.nickname));
+                            this.$router.push('/dashboard');
+                            console.info(123)
+                        }
+                    })
                 } else {
                     this.$message.error('请输入账号和密码');
                     console.log('error submit!!');
