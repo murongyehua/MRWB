@@ -43,6 +43,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfoPO.setCreateUser(UserContext.getUserId());
         userInfoPO.setUserState(ENCommonState.ACTIVE.getValue());
         userInfoPO.setPassword(DigestUtil.md5Hex(userInfoPO.getPassword()));
+        userInfoPO.setVersion(1);
         int count = userInfoMapper.insertSelective(userInfoPO);
         if (count != 1) {
             return ResultContext.businessFail("新增失败");
@@ -69,19 +70,21 @@ public class UserInfoServiceImpl implements UserInfoService {
         BeanUtil.copyProperties(user, userInfo);
         userInfo.setUserId(user.getId());
         request.getSession().setAttribute(UserContext.USER_SESSION, userInfo);
+        user.setLastLoginTime(new Date());
+        userInfoMapper.updateByPrimaryKey(user);
         return ResultContext.success("登录成功");
     }
 
     private boolean isUserExsit(BaseUserInfoPO userInfoPO) {
         BaseUserInfoPO checkParam = new BaseUserInfoPO();
         checkParam.setUsername(userInfoPO.getUsername());
-        List<BaseUserInfoPO> sameUsernameList = userInfoMapper.selectBySelective(userInfoPO);
+        List<BaseUserInfoPO> sameUsernameList = userInfoMapper.selectBySelective(checkParam);
         if (CollectionUtil.isNotEmpty(sameUsernameList)) {
             return true;
         }
         checkParam.setUsername(null);
         checkParam.setNickname(userInfoPO.getNickname());
-        List<BaseUserInfoPO> sameNicknameList = userInfoMapper.selectBySelective(userInfoPO);
+        List<BaseUserInfoPO> sameNicknameList = userInfoMapper.selectBySelective(checkParam);
         if (CollectionUtil.isNotEmpty(sameNicknameList)) {
             return true;
         }

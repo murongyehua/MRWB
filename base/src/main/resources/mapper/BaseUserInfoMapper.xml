@@ -150,32 +150,33 @@
       version = #{version,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <select id="selectBySelective" resultMap="BaseResultMap">
+  <select id="selectBySelective" parameterType="com.murongyehua.mrwb.base.dao.po.BaseUserInfoPO"
+          resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>
     from base_user_info
     <where>
       <if test="id != null and id != ''">
          id = #{id}
       </if>
-      <if test="username != null">
+      <if test="username != null and username != ''">
         and username = #{username,jdbcType=VARCHAR}
       </if>
-      <if test="password != null">
+      <if test="password != null and password != ''" >
         and `password` = #{password,jdbcType=VARCHAR}
       </if>
-      <if test="nickname != null">
+      <if test="nickname != null and nickname != ''">
         and nickname = #{nickname,jdbcType=VARCHAR}
       </if>
-      <if test="userType != null">
+      <if test="userType != null and userType != ''">
         and user_type = #{userType,jdbcType=CHAR}
       </if>
-      <if test="userState != null">
+      <if test="userState != null and userState != ''">
         and user_state = #{userState,jdbcType=CHAR}
       </if>
       <if test="createTime != null">
         and create_time = #{createTime,jdbcType=TIMESTAMP}
       </if>
-      <if test="createUser != null">
+      <if test="createUser != null and createUser != ''">
         and create_user = #{createUser,jdbcType=VARCHAR}
       </if>
       <if test="lastLoginTime != null">
