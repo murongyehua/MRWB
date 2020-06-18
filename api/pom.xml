@@ -11,5 +11,11 @@
 
     <artifactId>api</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>com.murongyehua</groupId>
+            <artifactId>commom</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

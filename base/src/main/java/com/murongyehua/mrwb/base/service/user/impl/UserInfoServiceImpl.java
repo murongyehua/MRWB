@@ -35,7 +35,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     public ResultContext addUser(UserAddReq req) {
         BaseUserInfoPO userInfoPO = new BaseUserInfoPO();
         BeanUtil.copyProperties(req, userInfoPO);
-        if (isUserExsit(userInfoPO)) {
+        if (isUserExist(userInfoPO)) {
             return ResultContext.businessFail("用户已存在");
         }
         userInfoPO.setId(IdUtil.simpleUUID());
@@ -75,7 +75,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         return ResultContext.success("登录成功");
     }
 
-    private boolean isUserExsit(BaseUserInfoPO userInfoPO) {
+    private boolean isUserExist(BaseUserInfoPO userInfoPO) {
         BaseUserInfoPO checkParam = new BaseUserInfoPO();
         checkParam.setUsername(userInfoPO.getUsername());
         List<BaseUserInfoPO> sameUsernameList = userInfoMapper.selectBySelective(checkParam);

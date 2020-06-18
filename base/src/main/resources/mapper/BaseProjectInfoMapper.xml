@@ -101,4 +101,28 @@
       version = #{version,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectBySelective" resultMap="BaseResultMap" parameterType="com.murongyehua.mrwb.base.dao.po.BaseProjectInfoPO">
+    select <include refid="Base_Column_List"/>
+    from base_project_info
+    <where>
+      <if test="id != null">
+        id = #{id,jdbcType=VARCHAR}
+      </if>
+      <if test="name != null">
+        and `name` = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="projectState != null">
+        and project_state = #{projectState,jdbcType=CHAR}
+      </if>
+      <if test="createUser != null">
+        and create_user = #{createUser,jdbcType=VARCHAR}
+      </if>
+      <if test="createTime != null">
+        and create_time = #{createTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="version != null">
+        and version = #{version,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
 </mapper>
