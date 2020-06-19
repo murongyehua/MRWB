@@ -11,17 +11,12 @@
                         </div>
                     </div>
                     <div class="user-info-list">
-                        上次登录时间：
-                        <span>2019-12-04(假的)</span>
-                    </div>
-                    <div class="user-info-list">
-                        上次登录地点：
-                        <span>杭州(假的)</span>
+                        上次登录时间：<span>{{lastLoginTime}}</span>
                     </div>
                 </el-card>
             </el-col>
             <el-col :span="16">
-                <el-row :gutter="20" class="mgb20">
+                <el-row :gutter="20" class="mgb20" v-if="userType === '1'">
                     <el-col :span="8">
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
                             <div class="grid-content grid-con-1">
@@ -29,17 +24,6 @@
                                 <div class="grid-cont-right">
                                     <div class="grid-num">1234</div>
                                     <div>用户访问量</div>
-                                </div>
-                            </div>
-                        </el-card>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-card shadow="hover" :body-style="{padding: '0px'}">
-                            <div class="grid-content grid-con-2">
-                                <i class="el-icon-lx-notice grid-con-icon"></i>
-                                <div class="grid-cont-right">
-                                    <div class="grid-num">321</div>
-                                    <div>系统消息</div>
                                 </div>
                             </div>
                         </el-card>
@@ -58,7 +42,8 @@ export default {
     data() {
         return {
             nickname: '',
-            userType: ''
+            userType: '',
+            lastLoginTime: ''
         };
     },
     components: {
@@ -74,15 +59,9 @@ export default {
         let userInfo = JSON.parse(userInfoStr)
         this.userType = userInfo.userType
         this.nickname = userInfo.nickname
+        this.lastLoginTime = userInfo.lastLoginTimeText
     },
     methods: {
-        changeDate() {
-            const now = new Date().getTime();
-            this.data.forEach((item, index) => {
-                const date = new Date(now - (6 - index) * 86400000);
-                item.name = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
-            });
-        }
     }
 };
 </script>
@@ -177,7 +156,7 @@ export default {
 }
 
 .user-info-list span {
-    margin-left: 70px;
+    margin-left: 20px;
 }
 
 .mgb20 {

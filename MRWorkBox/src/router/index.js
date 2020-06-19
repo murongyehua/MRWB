@@ -20,6 +20,10 @@ export default new Router({
                     meta: { title: '系统首页' }
                 },
                 {
+                    path: '/systemManage',
+                    component: () => import('../components/page/SystemManage.vue'),
+                },
+                {
                     path: '/table',
                     component: () => import(/* webpackChunkName: "table" */ '../components/page/ChannelManager.vue'),
                     meta: { title: '渠道管理' }

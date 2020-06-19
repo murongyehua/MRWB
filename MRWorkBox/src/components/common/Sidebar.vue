@@ -66,7 +66,8 @@ export default {
                     index: 'table',
                     title: '渠道管理'
                 }
-            ]
+            ],
+            userType: ''
         };
     },
     computed: {
@@ -80,6 +81,9 @@ export default {
             this.collapse = msg;
             bus.$emit('collapse-content', msg);
         });
+    },
+    mounted() {
+        this.userType = JSON.parse(localStorage.getItem('ms_username')).userType
     }
 };
 </script>

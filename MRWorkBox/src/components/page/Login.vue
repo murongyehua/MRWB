@@ -52,9 +52,8 @@ export default {
                     this.API.userLogin(data).then(res => {
                         if (res.code === '0') {
                             this.$message.success('登录成功');
-                            localStorage.setItem('ms_username', JSON.stringify(res.data.nickname));
+                            localStorage.setItem('ms_username', JSON.stringify(res.data));
                             this.$router.push('/dashboard');
-                            console.info(123)
                         }
                     })
                 } else {

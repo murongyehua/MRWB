@@ -2,8 +2,11 @@ package com.murongyehua.mrwb.base.service.user.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import com.murongyehua.mrwb.api.dto.UserInfoDTO;
 import com.murongyehua.mrwb.api.req.UserAddReq;
 import com.murongyehua.mrwb.api.req.UserEditReq;
 import com.murongyehua.mrwb.api.req.UserLoginReq;
@@ -73,7 +76,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         user.setLastLoginTime(new Date());
         userInfoMapper.updateByPrimaryKey(user);
         ResultContext resultContext = ResultContext.success("登录成功");
-        resultContext.setData(user);
+        UserInfoDTO userInfoDTO = new UserInfoDTO();
+        BeanUtil.copyProperties(user, userInfoDTO);
+        userInfoDTO.setLastLoginTimeText(DateUtil.format(user.getLastLoginTime(), DatePattern.NORM_DATETIME_PATTERN));
+        resultContext.setData(userInfoDTO);
         return resultContext;
     }
 

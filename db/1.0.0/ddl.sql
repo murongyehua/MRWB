@@ -126,3 +126,18 @@ comment on column base_user_right.create_user
   is '创建人';
 comment on column base_user_right.create_time
   is '创建时间';
+
+create table base_menu
+(
+  id varchar(32) primary key ,
+  icon varchar(64),
+  route_index varchar(32),
+  title varchar(16)
+);
+
+create table base_modal_menu
+(
+  id varchar(32) primary key ,
+  modal_id varchar(32),
+  menu_id varchar(32)
+);

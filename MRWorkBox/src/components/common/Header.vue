@@ -38,7 +38,7 @@
                         <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item divided>修改资料</el-dropdown-item>
+                        <el-dropdown-item divided command="editUserInfo">修改资料</el-dropdown-item>
                         <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -59,7 +59,7 @@ export default {
     },
     computed: {
         username() {
-            let username = localStorage.getItem('ms_username');
+            let username = JSON.parse(localStorage.getItem('ms_username')).nickname;
             return username ? username : this.name;
         }
     },
@@ -69,6 +69,9 @@ export default {
             if (command == 'loginout') {
                 localStorage.removeItem('ms_username');
                 this.$router.push('/login');
+            }
+            if (command == 'editUserInfo') {
+
             }
         },
         // 侧边栏折叠
