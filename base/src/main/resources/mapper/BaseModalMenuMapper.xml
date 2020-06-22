@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.murongyehua.mrwb.base.dao.mapper.BaseModalMenuMapper">
+  <resultMap id="BaseResultMap" type="com.murongyehua.mrwb.base.dao.po.BaseModalMenuPO">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="modal_id" jdbcType="VARCHAR" property="modalId" />
+    <result column="menu_id" jdbcType="VARCHAR" property="menuId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, modal_id, menu_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from base_modal_menu
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from base_modal_menu
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.murongyehua.mrwb.base.dao.po.BaseModalMenuPO">
+    insert into base_modal_menu (id, modal_id, menu_id
+      )
+    values (#{id,jdbcType=VARCHAR}, #{modalId,jdbcType=VARCHAR}, #{menuId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.murongyehua.mrwb.base.dao.po.BaseModalMenuPO">
+    insert into base_modal_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="modalId != null">
+        modal_id,
+      </if>
+      <if test="menuId != null">
+        menu_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="modalId != null">
+        #{modalId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId != null">
+        #{menuId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.murongyehua.mrwb.base.dao.po.BaseModalMenuPO">
+    update base_modal_menu
+    <set>
+      <if test="modalId != null">
+        modal_id = #{modalId,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId != null">
+        menu_id = #{menuId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.murongyehua.mrwb.base.dao.po.BaseModalMenuPO">
+    update base_modal_menu
+    set modal_id = #{modalId,jdbcType=VARCHAR},
+      menu_id = #{menuId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.murongyehua.mrwb.base.dao.mapper.BaseMenuMapper">
+  <resultMap id="BaseResultMap" type="com.murongyehua.mrwb.base.dao.po.BaseMenuPO">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="route_index" jdbcType="VARCHAR" property="routeIndex" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, icon, route_index, title
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from base_menu
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from base_menu
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.murongyehua.mrwb.base.dao.po.BaseMenuPO">
+    insert into base_menu (id, icon, route_index, 
+      title)
+    values (#{id,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{routeIndex,jdbcType=VARCHAR}, 
+      #{title,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.murongyehua.mrwb.base.dao.po.BaseMenuPO">
+    insert into base_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="icon != null">
+        icon,
+      </if>
+      <if test="routeIndex != null">
+        route_index,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="routeIndex != null">
+        #{routeIndex,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.murongyehua.mrwb.base.dao.po.BaseMenuPO">
+    update base_menu
+    <set>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="routeIndex != null">
+        route_index = #{routeIndex,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.murongyehua.mrwb.base.dao.po.BaseMenuPO">
+    update base_menu
+    set icon = #{icon,jdbcType=VARCHAR},
+      route_index = #{routeIndex,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+    <select id="selectBySelective" parameterType="com.murongyehua.mrwb.base.dao.po.BaseMenuPO" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from base_menu
+        <where>
+            <if test="id != null">
+                id =#{id,jdbcType=VARCHAR}
+            </if>
+            <if test="icon != null">
+                and icon = #{icon,jdbcType=VARCHAR}
+            </if>
+            <if test="routeIndex != null">
+                and route_index = #{routeIndex,jdbcType=VARCHAR}
+            </if>
+            <if test="title != null">
+                and title = #{title,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+</mapper>

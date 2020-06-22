@@ -55,18 +55,7 @@ export default {
     data() {
         return {
             collapse: false,
-            items: [
-                {
-                    icon: 'el-icon-lx-home',
-                    index: 'dashboard',
-                    title: '系统首页'
-                },
-                {
-                    icon: 'el-icon-lx-cascades',
-                    index: 'table',
-                    title: '渠道管理'
-                }
-            ],
+            items: [],
             userType: ''
         };
     },
@@ -76,6 +65,7 @@ export default {
         }
     },
     created() {
+        this.getMenu()
         // 通过 Event Bus 进行组件间通信，来折叠侧边栏
         bus.$on('collapse', msg => {
             this.collapse = msg;
@@ -84,6 +74,29 @@ export default {
     },
     mounted() {
         this.userType = JSON.parse(localStorage.getItem('ms_username')).userType
+    },
+    methods: {
+        getMenu () {
+            this.API.getMenu().then(res =>{
+                if (res.code === '0') {
+                    let menu = []
+                    menu.push({
+                        icon: 'el-icon-lx-home',
+                        index: 'dashboard',
+                        title: '系统首页'
+                    })
+                    res.data.forEach(x => {
+                        let item = {
+                            icon: x.icon,
+                            index: x.routeIndex,
+                            title: x.title
+                        }
+                        menu.push(item)
+                    })
+                    this.items = menu
+                }
+            })
+        }
     }
 };
 </script>

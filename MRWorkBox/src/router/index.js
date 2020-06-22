@@ -22,6 +22,7 @@ export default new Router({
                 {
                     path: '/systemManage',
                     component: () => import('../components/page/SystemManage.vue'),
+                    meta: { title: '系统管理' }
                 },
                 {
                     path: '/table',
