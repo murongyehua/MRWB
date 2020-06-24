@@ -1,6 +1,7 @@
 package com.murongyehua.mrwb.base.dao.mapper;
 
 import com.murongyehua.mrwb.base.dao.po.BaseProjectInfoPO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface BaseProjectInfoMapper {
     int updateByPrimaryKey(BaseProjectInfoPO record);
 
     List<BaseProjectInfoPO> selectBySelective(BaseProjectInfoPO projectInfo);
+
+    List<BaseProjectInfoPO> selectByIds(@Param("ids") List<String> ids);
 }

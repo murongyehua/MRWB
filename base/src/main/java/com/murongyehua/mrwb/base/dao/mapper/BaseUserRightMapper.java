@@ -1,6 +1,9 @@
 package com.murongyehua.mrwb.base.dao.mapper;
 
 import com.murongyehua.mrwb.base.dao.po.BaseUserRightPO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface BaseUserRightMapper {
     int deleteByPrimaryKey(String id);
@@ -14,4 +17,8 @@ public interface BaseUserRightMapper {
     int updateByPrimaryKeySelective(BaseUserRightPO record);
 
     int updateByPrimaryKey(BaseUserRightPO record);
+
+    List<String> distinctProjectId(@Param("userId") String userId);
+
+    List<BaseUserRightPO> selectBySelective(BaseUserRightPO record);
 }

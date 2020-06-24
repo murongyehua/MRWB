@@ -125,4 +125,11 @@
       </if>
     </where>
   </select>
+  <select id="selectByIds" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/> from base_project_info
+    where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+    #{id}
+  </foreach>
+  </select>
 </mapper>

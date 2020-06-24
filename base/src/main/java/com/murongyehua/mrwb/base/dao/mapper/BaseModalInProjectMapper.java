@@ -2,7 +2,7 @@ package com.murongyehua.mrwb.base.dao.mapper;
 
 import com.murongyehua.mrwb.base.dao.po.BaseModalInProjectPO;
 
-public interface BasBaseModalInProjectMapper {
+public interface BaseModalInProjectMapper {
     int deleteByPrimaryKey(String id);
 
     int insert(BaseModalInProjectPO record);
