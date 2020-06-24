@@ -6,21 +6,28 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.murongyehua.mrwb.api.dto.UserInfoDTO;
+import com.murongyehua.mrwb.api.param.UserListParam;
 import com.murongyehua.mrwb.api.req.UserAddReq;
 import com.murongyehua.mrwb.api.req.UserEditReq;
 import com.murongyehua.mrwb.api.req.UserLoginReq;
+import com.murongyehua.mrwb.api.resp.UserListResp;
 import com.murongyehua.mrwb.base.dao.mapper.BaseUserInfoMapper;
 import com.murongyehua.mrwb.base.dao.po.BaseUserInfoPO;
 import com.murongyehua.mrwb.base.service.user.UserInfoService;
+import com.murongyehua.mrwb.commom.PageView;
 import com.murongyehua.mrwb.commom.ResultContext;
 import com.murongyehua.mrwb.commom.enums.ENCommonState;
+import com.murongyehua.mrwb.commom.enums.ENUserType;
 import com.murongyehua.mrwb.commom.user.UserContext;
 import com.murongyehua.mrwb.commom.user.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -81,6 +88,35 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfoDTO.setLastLoginTimeText(DateUtil.format(user.getLastLoginTime(), DatePattern.NORM_DATETIME_PATTERN));
         resultContext.setData(userInfoDTO);
         return resultContext;
+    }
+
+    @Override
+    public PageView queryUserList(UserListParam param) {
+        BaseUserInfoPO userInfoPO = new BaseUserInfoPO();
+        BeanUtil.copyProperties(param, userInfoPO);
+        PageHelper.startPage(param.getPageNum(), param.getPageSize(), param.getOrderBy());
+        List<BaseUserInfoPO> list = userInfoMapper.selectBySelective(userInfoPO);
+        PageInfo pageInfo = new PageInfo(this.translate(list));
+        PageView pageView = new PageView();
+        BeanUtil.copyProperties(ResultContext.success("操作成功"), pageView);
+        pageView.setRows(pageInfo.getList());
+        pageView.setTotal(pageInfo.getTotal());
+        return pageView;
+    }
+
+    private List<UserListResp> translate(List<BaseUserInfoPO> list) {
+        List<UserListResp> result = new ArrayList<>();
+        int num = 1;
+        for (BaseUserInfoPO userInfoPO : list) {
+            UserListResp userListResp = new UserListResp();
+            BeanUtil.copyProperties(userInfoPO, userListResp);
+            userListResp.setUserStateText(ENCommonState.getLabelByValue(userInfoPO.getUserState()));
+            userListResp.setUserTypeText(ENUserType.getLabelByValue(userInfoPO.getUserType()));
+            userListResp.setIndex(num);
+            result.add(userListResp);
+            num++;
+        }
+        return result;
     }
 
     private boolean isUserExist(BaseUserInfoPO userInfoPO) {

@@ -1,8 +1,10 @@
 package com.murongyehua.mrwb.base.service.user;
 
+import com.murongyehua.mrwb.api.param.UserListParam;
 import com.murongyehua.mrwb.api.req.UserAddReq;
 import com.murongyehua.mrwb.api.req.UserEditReq;
 import com.murongyehua.mrwb.api.req.UserLoginReq;
+import com.murongyehua.mrwb.commom.PageView;
 import com.murongyehua.mrwb.commom.ResultContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,5 +20,7 @@ public interface UserInfoService {
     ResultContext editUser(UserEditReq req);
 
     ResultContext userLogin(UserLoginReq req, HttpServletRequest request);
+
+    PageView queryUserList(UserListParam param);
 
 }

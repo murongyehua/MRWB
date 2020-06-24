@@ -7,6 +7,12 @@ let url = baseUrl + '/mr'
 const user =  {
     userLogin (param) {
         return post(url + '/base/userInfo/login.pub', param)
+    },
+    queryUserList (param) {
+        return post(url + '/base/userInfo/query.smg', param)
+    },
+    addUser (param) {
+        return post(url + '/base/userInfo/add.smg', param)
     }
 }
 
@@ -16,9 +22,16 @@ const right = {
     }
 }
 
+const project = {
+    queryProjectList (param) {
+        return post(url + '/base/project/query.pub', param)
+    }
+}
+
 const API = {
     ...user,
-    ...right
+    ...right,
+    ...project
 }
 
 export default API

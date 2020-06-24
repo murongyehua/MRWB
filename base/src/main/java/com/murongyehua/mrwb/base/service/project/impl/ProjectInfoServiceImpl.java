@@ -2,11 +2,14 @@ package com.murongyehua.mrwb.base.service.project.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.murongyehua.mrwb.api.param.ProjectParam;
 import com.murongyehua.mrwb.api.req.ProjectAddReq;
+import com.murongyehua.mrwb.api.resp.ProjectListResp;
 import com.murongyehua.mrwb.base.dao.mapper.BaseProjectInfoMapper;
 import com.murongyehua.mrwb.base.dao.po.BaseProjectInfoPO;
 import com.murongyehua.mrwb.base.service.project.ProjectInfoService;
@@ -17,6 +20,7 @@ import com.murongyehua.mrwb.commom.user.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -54,12 +58,27 @@ public class ProjectInfoServiceImpl implements ProjectInfoService {
         BaseProjectInfoPO projectInfo = new BaseProjectInfoPO();
         BeanUtil.copyProperties(param, projectInfo);
         PageHelper.startPage(param.getPageNum(), param.getPageSize(), param.getOrderBy());
-        PageInfo pageInfo = new PageInfo(projectInfoMapper.selectBySelective(projectInfo));
+        PageInfo pageInfo = new PageInfo(this.translate(projectInfoMapper.selectBySelective(projectInfo)));
         PageView pageView = new PageView();
         BeanUtil.copyProperties(ResultContext.success("操作成功"), pageView);
         pageView.setRows(pageInfo.getList());
         pageView.setTotal(pageInfo.getTotal());
         return pageView;
+    }
+
+    private List<ProjectListResp> translate(List<BaseProjectInfoPO> list) {
+        List<ProjectListResp> result = new ArrayList<>();
+        int num = 1;
+        for (BaseProjectInfoPO projectInfoPO : list) {
+            ProjectListResp projectListResp = new ProjectListResp();
+            BeanUtil.copyProperties(projectInfoPO, projectListResp);
+            projectListResp.setCreateTimeText(DateUtil.format(projectInfoPO.getCreateTime(), DatePattern.NORM_DATETIME_PATTERN));
+            projectListResp.setProjectStateText(ENCommonState.getLabelByValue(projectInfoPO.getProjectState()));
+            projectListResp.setIndex(num);
+            result.add(projectListResp);
+            num++;
+        }
+        return result;
     }
 
 

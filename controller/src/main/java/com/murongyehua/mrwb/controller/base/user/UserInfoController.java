@@ -1,8 +1,10 @@
 package com.murongyehua.mrwb.controller.base.user;
 
+import com.murongyehua.mrwb.api.param.UserListParam;
 import com.murongyehua.mrwb.api.req.UserAddReq;
 import com.murongyehua.mrwb.api.req.UserLoginReq;
 import com.murongyehua.mrwb.base.service.user.UserInfoService;
+import com.murongyehua.mrwb.commom.PageView;
 import com.murongyehua.mrwb.commom.ResultContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,4 +33,10 @@ public class UserInfoController {
     public ResultContext userLogin(UserLoginReq req, HttpServletRequest request) {
         return userInfoService.userLogin(req, request);
     }
+
+    @PostMapping("/query.smg")
+    public PageView queryList(UserListParam param) {
+        return userInfoService.queryUserList(param);
+    }
+
 }

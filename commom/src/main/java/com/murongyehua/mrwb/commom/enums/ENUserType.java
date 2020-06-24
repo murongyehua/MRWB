@@ -22,4 +22,17 @@ public enum ENUserType {
         this.value = value;
         this.label = label;
     }
+
+    public static String getLabelByValue(String value) {
+        if (value == null) {
+            return null;
+        }
+        ENUserType[] enUserTypes = ENUserType.values();
+        for (ENUserType enUserType : enUserTypes) {
+            if (enUserType.value.equals(value)) {
+                return enUserType.label;
+            }
+        }
+        return value;
+    }
 }

@@ -12,6 +12,8 @@ public class UserContext {
 
     public static final String USER_SESSION = "loginUser";
 
+    public static final String PROJECT_SESSION = "projectSession";
+
     public static void setUserInfo(UserInfo userInfo) {
         threadLocal.set(userInfo);
     }
