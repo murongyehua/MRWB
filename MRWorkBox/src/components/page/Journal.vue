@@ -53,17 +53,7 @@
                 header-cell-class-name="table-header"
                 @selection-change="handleSelectionChange"
             >
-                <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="channelName" label="渠道名称"></el-table-column>
-                <el-table-column prop="channelCode" label="渠道编码"></el-table-column>
-                <el-table-column label="状态" align="center">
-                    <template slot-scope="scope">
-                        <el-tag
-                            :type="scope.row.activeStateText==='启用'?'success':(scope.row.activeStateText==='停用'?'danger':'')"
-                        >{{scope.row.activeStateText}}</el-tag>
-                    </template>
-                </el-table-column>
+                <el-table-column v-for="item in tableFields" :prop="item.fieldName" label="item.fieldName" align="left"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -122,26 +112,51 @@ export default {
                 pageSize: 10
             },
             tableData: [],
+            tableFields: [],
             multipleSelection: [],
             delList: [],
             editVisible: false,
             pageTotal: 0,
             form: {},
             idx: -1,
-            id: -1
+            id: -1,
+            pickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近三个月',
+                    onClick(picker) {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                        picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
         };
     },
     created() {
         this.getData();
+        this.getFields();
     },
     methods: {
         // 获取 easy-mock 的模拟数据
         getData() {
-            this.API.queryChannelList().then(res => {
-                console.log(res);
-                this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
-            });
+
         },
         // 触发搜索按钮
         handleSearch() {
@@ -190,6 +205,11 @@ export default {
         handlePageChange(val) {
             this.$set(this.query, 'pageIndex', val);
             this.getData();
+        },
+        getFields () {
+            this.API.getJournalFields().then(res => {
+                this.tableFields = res.data
+            })
         }
     }
 };

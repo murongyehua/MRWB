@@ -43,12 +43,19 @@ const menu = {
     }
 }
 
+const journal = {
+    getJournalFields (param) {
+        return post(url + '/journal/field/getFields.do', param)
+    }
+}
+
 const API = {
     ...user,
     ...right,
     ...project,
     ...modal,
-    ...menu
+    ...menu,
+    ...journal
 }
 
 export default API
