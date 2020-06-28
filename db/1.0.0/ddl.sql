@@ -141,3 +141,39 @@ create table base_modal_menu
   modal_id varchar(32),
   menu_id varchar(32)
 );
+
+create table journal_field
+(
+  id varchar(32) primary key ,
+  project_id varchar(32),
+  field_name varchar(12),
+  field_type char(1),
+  field_content varchar(128),
+  max_length varchar(4),
+  sortNum varchar(2),
+  create_user varchar(32),
+  create_time timestamp,
+  version int
+);
+
+create table journal_content
+(
+  id varchar(32) primary key ,
+  summary_id varchar(32),
+  field_id varchar(32),
+  content varchar(1024)
+);
+
+create table journal_summary
+(
+  id varchar(32) primary key ,
+  project_id varchar(32),
+  deal_user varchar(32),
+  deal_date varchar(10),
+  state char(1),
+  attach varchar(64),
+  last_modify_time timestamp,
+  create_user varchar(32),
+  create_time timestamp,
+  version int
+);
