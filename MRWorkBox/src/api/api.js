@@ -28,10 +28,24 @@ const project = {
     }
 }
 
+const modal = {
+    queryModalList (param) {
+        return post(url + '/base/modal/query.smg', param)
+    }
+}
+
+const menu = {
+    queryMenuList (param) {
+        return post(url + '/base/menu.query.smg', param)
+    }
+}
+
 const API = {
     ...user,
     ...right,
-    ...project
+    ...project,
+    ...modal,
+    ...menu
 }
 
 export default API

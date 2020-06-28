@@ -2,6 +2,8 @@ package com.murongyehua.mrwb.base.dao.mapper;
 
 import com.murongyehua.mrwb.base.dao.po.BaseModalInfoPO;
 
+import java.util.List;
+
 public interface BaseModalInfoMapper {
     int deleteByPrimaryKey(String id);
 
@@ -14,4 +16,6 @@ public interface BaseModalInfoMapper {
     int updateByPrimaryKeySelective(BaseModalInfoPO record);
 
     int updateByPrimaryKey(BaseModalInfoPO record);
+
+    List<BaseModalInfoPO> selectBySelective(BaseModalInfoPO record);
 }

@@ -101,4 +101,19 @@
       version = #{version,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectBySelective" resultMap="BaseResultMap" >
+    select <include refid="Base_Column_List"/>
+    from base_modal_info
+    <where>
+      <if test="id != null">
+        id = #{id, jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        and `name` = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="modalState != null">
+        and modal_state = #{modalState,jdbcType=CHAR}
+      </if>
+    </where>
+  </select>
 </mapper>
