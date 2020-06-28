@@ -56,7 +56,8 @@ export default {
         return {
             collapse: false,
             items: [],
-            userType: ''
+            userType: '',
+            projectId: ''
         };
     },
     computed: {
@@ -65,11 +66,15 @@ export default {
         }
     },
     created() {
-        this.getMenu()
         // 通过 Event Bus 进行组件间通信，来折叠侧边栏
         bus.$on('collapse', msg => {
             this.collapse = msg;
             bus.$emit('collapse-content', msg);
+        });
+        let that = this
+        bus.$on('flushMenu', projectId => {
+            this.projectId = projectId
+            that.getMenu();
         });
     },
     mounted() {
@@ -77,7 +82,7 @@ export default {
     },
     methods: {
         getMenu () {
-            this.API.getMenu().then(res =>{
+            this.API.getMenu({project: this.projectId}).then(res =>{
                 if (res.code === '0') {
                     let menu = []
                     menu.push({

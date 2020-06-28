@@ -26,7 +26,35 @@ public class JournalSummaryPO implements Serializable {
 
     private Date createTime;
 
-    private Integer version;
+    private String historyForId;
+
+    private String tagId;
+
+    private String title;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getHistoryForId() {
+        return historyForId;
+    }
+
+    public String getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(String tagId) {
+        this.tagId = tagId;
+    }
+
+    public void setHistoryForId(String historyForId) {
+        this.historyForId = historyForId;
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -102,11 +130,11 @@ public class JournalSummaryPO implements Serializable {
         this.createTime = createTime;
     }
 
-    public Integer getVersion() {
-        return version;
+    public String getVersion() {
+        return historyForId;
     }
 
-    public void setVersion(Integer version) {
-        this.version = version;
+    public void setVersion(String historyForId) {
+        this.historyForId = historyForId;
     }
 }

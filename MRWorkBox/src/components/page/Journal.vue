@@ -3,26 +3,48 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 渠道管理
+                    <i class="el-icon-lx-cascades"></i> 值班记录
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-button
+                <el-form :inline="true">
+                <el-form-item label="处理时间">
+                    <el-date-picker
+                            v-model="query.dealDate"
+                            type="daterange"
+                            align="right"
+                            unlink-panels
+                            size="mini"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            :picker-options="pickerOptions">
+                    </el-date-picker>
+                </el-form-item>
+                    <el-form-item label="处理人">
+                        <el-input size="mini" v-model="query.dealUser"/>
+                    </el-form-item>
+                    <el-form-item label="标题关键字">
+                        <el-input size="mini" v-model="query.dealUser"/>
+                    </el-form-item>
+                    <el-form-item label="分类">
+                        <el-input size="mini" v-model="query.dealUser"/>
+                    </el-form-item>
+                <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+                </el-form>
+            </div>
+            <el-button
                     type="success"
                     icon="el-icon-plus"
                     class="handle-del mr8"
-                >新增</el-button>
-                <el-button
+            >新增</el-button>
+            <el-button
                     type="primary"
                     icon="el-icon-delete"
                     class="handle-del mr10"
                     @click="delAllSelection"
-                >批量删除</el-button>
-                <el-input v-model="query.name" placeholder="输入渠道名称/编码关键字，用以模糊查询" class="handle-input mr10"></el-input>
-                <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
-            </div>
+            >删除</el-button>
             <el-table
                 :data="tableData"
                 border
@@ -54,7 +76,7 @@
                             icon="el-icon-delete"
                             class="red"
                             @click="handleDelete(scope.$index, scope.row)"
-                        >删除</el-button>
+                        >查看历史</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -94,8 +116,8 @@ export default {
     data() {
         return {
             query: {
-                address: '',
-                name: '',
+                dealDate: '',
+                dealUser: '',
                 pageIndex: 1,
                 pageSize: 10
             },

@@ -25,6 +25,9 @@ const right = {
 const project = {
     queryProjectList (param) {
         return post(url + '/base/project/query.pub', param)
+    },
+    getProject (param) {
+        return post(url + '/base/userRight//getProjects.do', param)
     }
 }
 

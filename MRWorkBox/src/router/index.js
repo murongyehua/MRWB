@@ -25,9 +25,9 @@ export default new Router({
                     meta: { title: '系统管理' }
                 },
                 {
-                    path: '/table',
-                    component: () => import(/* webpackChunkName: "table" */ '../components/page/ChannelManager.vue'),
-                    meta: { title: '渠道管理' }
+                    path: '/journal',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/Journal.vue'),
+                    meta: { title: '值班记录' }
                 },
                 {
                     path: '/tabs',

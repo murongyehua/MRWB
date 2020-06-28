@@ -8,6 +8,9 @@
         <div class="logo">MR Work Box</div>
         <div class="header-right">
             <div class="header-user-con">
+                <el-select v-model="checkedProject" @change="projectChange">
+                    <el-option v-for="item in projects" :value="item.id" :label="item.name"></el-option>
+                </el-select>
                 <!-- 全屏显示 -->
                 <div class="btn-fullscreen" @click="handleFullScreen">
                     <el-tooltip effect="dark" :content="fullscreen?`取消全屏`:`全屏`" placement="bottom">
@@ -54,7 +57,9 @@ export default {
             collapse: false,
             fullscreen: false,
             name: 'linxin',
-            message: 2
+            message: 2,
+            projects: [],
+            checkedProject: ''
         };
     },
     computed: {
@@ -105,12 +110,36 @@ export default {
                 }
             }
             this.fullscreen = !this.fullscreen;
+        },
+        // 获取项目列表
+        getProject() {
+            this.API.getProject().then(res => {
+                if (res.code === '0') {
+                    this.projects = res.data
+                    this.checkedProject = res.data[0]
+                    bus.$emit('flushMenu', res.data[0].id)
+                }else {
+                    let msg = res.info + ',请返回登录'
+                    this.$confirm(msg, '提示', {
+                        confirmButtonText: '确定',
+                        type: 'warning'
+                    }).then(() => {
+                        this.$router.push('/login');
+                    }).catch(() => {
+                        this.$router.push('/login');
+                    });
+                }
+            })
+        },
+        projectChange () {
+            bus.$emit('flushMenu',this.checkedProject.id)
         }
     },
     mounted() {
         if (document.body.clientWidth < 1500) {
             this.collapseChage();
         }
+        this.getProject()
     }
 };
 </script>

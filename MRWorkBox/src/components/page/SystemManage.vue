@@ -3,6 +3,9 @@
     <div ref="tableWrap">
         <el-row :gutter="5">
             <el-col :span="12">
+                <div>
+                    <el-button size="mini" @click="showAddUserModal">新增</el-button>
+                </div>
                 <el-table
                         :data="userTableData"
                         border
@@ -47,10 +50,14 @@
                             :page-size="userSearchData.pageSize"
                             :total="userTableTotal"
                             @current-change="handlePageChange"
+                            small="true"
                     ></el-pagination>
                 </div>
             </el-col>
             <el-col :span="12">
+                <div>
+                    <el-button size="mini">新增</el-button>
+                </div>
                 <el-table
                         :data="projectTableData"
                         border
@@ -100,6 +107,9 @@
         </el-row>
         <el-row :gutter="5">
             <el-col :span="12">
+                <div>
+                    <el-button size="mini">新增</el-button>
+                </div>
                 <el-table
                         :data="modalTableData"
                         border
@@ -147,6 +157,9 @@
                 </div>
             </el-col>
             <el-col :span="12">
+                <div>
+                    <el-button size="mini">新增</el-button>
+                </div>
                 <el-table
                         :data="menuTableData"
                         border
@@ -187,6 +200,23 @@
             </el-col>
         </el-row>
     </div>
+        <el-dialog title="新增用户" :visible.sync="showUserAdd">
+            <el-form :model="userAdd">
+                <el-form-item label="用户名" :label-width="formLabelWidth">
+                    <el-input v-model="userAdd.username" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" :label-width="formLabelWidth">
+                    <el-input v-model="userAdd.password" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="昵称" :label-width="formLabelWidth">
+                    <el-input v-model="userAdd.nickname" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showUserAdd = false">取 消</el-button>
+                <el-button type="primary" @click="addUser">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -194,6 +224,7 @@
         name: 'systemManage',
         data() {
             return {
+                formLabelWidth: '120px',
                 userTableData: [],
                 userTableTotal: 0,
                 userLoading: true,
@@ -232,6 +263,14 @@
                     pageSize: 20,
                     sortName: '',
                     sortType: ''
+                },
+
+                showUserAdd: false,
+                userAdd: {
+                    username: '',
+                    password: '',
+                    nickname: '',
+                    userType: '0'
                 }
             }
         },
@@ -304,6 +343,15 @@
                 this.$refs.modalTable.height = `${finalHeight}px`;
                 this.$refs.menuTable.height = `${finalHeight}px`;
             },
+            showAddUserModal () {
+                this.showUserAdd = true
+            },
+            addUser () {
+                this.showUserAdd = false
+                this.API.addUser(this.userAdd).then(res =>{
+                    this.$message.info(res.info)
+                })
+            }
         }
     }
 

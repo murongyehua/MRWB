@@ -68,4 +68,12 @@
       menu_id = #{menuId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectByModalIds" resultMap="BaseResultMap" parameterType="java.util.List">
+    select <include refid="Base_Column_List"/>
+    from base_modal_menu
+    where modal_id in
+          <foreach collection="modalIds" separator="," open="(" close=")" item="modalId">
+            #{modalId}
+          </foreach>
+  </select>
 </mapper>

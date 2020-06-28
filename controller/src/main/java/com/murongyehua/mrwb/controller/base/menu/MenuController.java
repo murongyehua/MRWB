@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author liul
  * @version 1.0 2020/6/22
@@ -22,8 +24,8 @@ public class MenuController {
     private MenuService menuService;
 
     @PostMapping("/getMenu.do")
-    public ResultContext getMenu(MenuGetReq req){
-        return menuService.getMenu(req);
+    public ResultContext getMenu(MenuGetReq req, HttpServletRequest request){
+        return menuService.getMenu(req, request);
     }
 
     @PostMapping("/query.smg")

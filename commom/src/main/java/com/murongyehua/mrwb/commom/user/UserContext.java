@@ -8,24 +8,26 @@ import cn.hutool.core.lang.Assert;
  */
 public class UserContext {
 
-    private static ThreadLocal<UserInfo> threadLocal = new ThreadLocal<>();
+    private static ThreadLocal<UserInfo> userThreadLocal = new ThreadLocal<>();
+
+    private static ThreadLocal<String> projectThreadLocal = new ThreadLocal<>();
 
     public static final String USER_SESSION = "loginUser";
 
     public static final String PROJECT_SESSION = "projectSession";
 
     public static void setUserInfo(UserInfo userInfo) {
-        threadLocal.set(userInfo);
+        userThreadLocal.set(userInfo);
     }
 
     public static UserInfo getUserInfo() {
-        UserInfo userInfo = threadLocal.get();
+        UserInfo userInfo = userThreadLocal.get();
         Assert.notNull(userInfo, "无法获取登录用户信息！");
         return userInfo;
     }
 
     public static boolean hasUserInfo() {
-        UserInfo userInfo = threadLocal.get();
+        UserInfo userInfo = userThreadLocal.get();
         return userInfo != null;
     }
 
@@ -34,6 +36,16 @@ public class UserContext {
     }
 
     public static void remove() {
-        threadLocal.remove();
+        userThreadLocal.remove();
+    }
+
+    public static void setProjectThreadLocal(String projectId) {
+        projectThreadLocal.set(projectId);
+    }
+
+    public static String getProjectId() {
+        String projectId = projectThreadLocal.get();
+        Assert.notNull(projectId, "无法获取项目信息！");
+        return projectId;
     }
 }

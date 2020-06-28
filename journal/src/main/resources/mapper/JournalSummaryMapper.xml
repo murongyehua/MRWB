@@ -11,11 +11,13 @@
     <result column="last_modify_time" jdbcType="TIMESTAMP" property="lastModifyTime" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="history_for_id" jdbcType="VARCHAR" property="historyForId" />
+    <result column="tag_id" jdbcType="VARCHAR" property="tagId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
   </resultMap>
   <sql id="Base_Column_List">
     id, project_id, deal_user, deal_date, `state`, attach, last_modify_time, create_user, 
-    create_time, version
+    create_time, history_for_id, tag_id, title
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -30,11 +32,12 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO" useGeneratedKeys="true">
     insert into journal_summary (project_id, deal_user, deal_date, 
       `state`, attach, last_modify_time, 
-      create_user, create_time, version
+      create_user, create_time, history_for_id, tag_id, title
       )
     values (#{projectId,jdbcType=VARCHAR}, #{dealUser,jdbcType=VARCHAR}, #{dealDate,jdbcType=VARCHAR}, 
       #{state,jdbcType=CHAR}, #{attach,jdbcType=VARCHAR}, #{lastModifyTime,jdbcType=TIMESTAMP}, 
-      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{version,jdbcType=INTEGER}
+      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{historyForId,jdbcType=VARCHAR}, #{tagId,jdbcType=VARCHAR},
+      #{title,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO" useGeneratedKeys="true">
@@ -64,8 +67,14 @@
       <if test="createTime != null">
         create_time,
       </if>
-      <if test="version != null">
-        version,
+      <if test="historyForId != null">
+          history_for_id,
+      </if>
+      <if test="tagId != null">
+        tag_id,
+      </if>
+      <if test="title != null">
+        title,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -93,8 +102,14 @@
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="version != null">
-        #{version,jdbcType=INTEGER},
+      <if test="historyForId != null">
+        #{historyForId,jdbcType=VARCHAR},
+      </if>
+      <if test="tagId != null">
+        #{tagId,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -125,8 +140,14 @@
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="version != null">
-        version = #{version,jdbcType=INTEGER},
+      <if test="historyForId != null">
+          history_for_id = #{historyForId,jdbcType=VARCHAR},
+      </if>
+      <if test="tagId != null">
+        tag_id = #{tagId,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR}
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -141,7 +162,9 @@
       last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      version = #{version,jdbcType=INTEGER}
+      history_for_id = #{historyForId,jdbcType=VARCHAR},
+      tag_id = #{tagId,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

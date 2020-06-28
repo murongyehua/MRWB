@@ -175,5 +175,13 @@ create table journal_summary
   last_modify_time timestamp,
   create_user varchar(32),
   create_time timestamp,
-  version int
+  history_for_id varchar(32)
 );
+
+create table journal_tag
+  (
+    id varchar(32) primary key ,
+    tagName varchar(16),
+    create_user varchar(32),
+    create_time timestamp
+  );
