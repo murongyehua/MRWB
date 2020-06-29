@@ -42,9 +42,15 @@
             <el-button
                     type="primary"
                     icon="el-icon-delete"
-                    class="handle-del mr10"
+                    class="handle-del mr8"
                     @click="delAllSelection"
             >删除</el-button>
+            <el-button
+                    type="info"
+                    icon="el-icon-s-grid"
+                    class="handle-del mr10"
+                    @click="changeView"
+            >切换视图</el-button>
             <el-table
                 :data="tableData"
                 border
@@ -52,6 +58,7 @@
                 ref="multipleTable"
                 header-cell-class-name="table-header"
                 @selection-change="handleSelectionChange"
+                v-if="tableView"
             >
                 <el-table-column v-for="item in tableFields" :prop="item.fieldName" :label="item.fieldName" align="left"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
@@ -70,6 +77,31 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <el-row>
+                <el-col :span="8">
+                    <el-card class="box-card" v-if="!tableView">
+                        <div slot="header" class="clearfix">
+                            <span>卡片名称</span>
+                            <el-button
+                                    type="text"
+                                    icon="el-icon-edit"
+                                    style="float: right; padding: 3px 0"
+                                    @click="handleEdit(scope.$index, scope.row)"
+                            >编辑</el-button>
+                            <el-button
+                                    type="text"
+                                    icon="el-icon-delete"
+                                    class="red"
+                                    style="float: right; padding: 3px 0"
+                                    @click="handleDelete(scope.$index, scope.row)"
+                            >查看历史</el-button>
+                        </div>
+                        <div v-for="o in 4" :key="o" class="text item">
+                            {{'列表内容 ' + o }}
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row>
             <div class="pagination">
                 <el-pagination
                     background
@@ -112,6 +144,7 @@ export default {
                 pageSize: 10
             },
             tableData: [],
+            tableView: true,
             tableFields: [],
             multipleSelection: [],
             delList: [],
@@ -190,6 +223,9 @@ export default {
             }
             this.$message.error(`删除了${str}`);
             this.multipleSelection = [];
+        },
+        changeView() {
+            this.tableView = !this.tableView
         },
         // 编辑操作
         handleEdit(index, row) {
