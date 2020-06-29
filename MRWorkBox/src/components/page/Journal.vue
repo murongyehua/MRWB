@@ -53,7 +53,7 @@
                 header-cell-class-name="table-header"
                 @selection-change="handleSelectionChange"
             >
-                <el-table-column v-for="item in tableFields" :prop="item.fieldName" label="item.fieldName" align="left"></el-table-column>
+                <el-table-column v-for="item in tableFields" :prop="item.fieldName" :label="item.fieldName" align="left"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -151,6 +151,8 @@ export default {
     },
     created() {
         this.getData();
+    },
+    mounted() {
         this.getFields();
     },
     methods: {

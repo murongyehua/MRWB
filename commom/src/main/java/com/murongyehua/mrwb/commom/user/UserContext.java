@@ -10,8 +10,6 @@ public class UserContext {
 
     private static ThreadLocal<UserInfo> userThreadLocal = new ThreadLocal<>();
 
-    private static ThreadLocal<String> projectThreadLocal = new ThreadLocal<>();
-
     public static final String USER_SESSION = "loginUser";
 
     public static final String PROJECT_SESSION = "projectSession";
@@ -40,11 +38,13 @@ public class UserContext {
     }
 
     public static void setProjectThreadLocal(String projectId) {
-        projectThreadLocal.set(projectId);
+        UserInfo userInfo = userThreadLocal.get();
+        userInfo.setProjectId(projectId);
+        userThreadLocal.set(userInfo);
     }
 
     public static String getProjectId() {
-        String projectId = projectThreadLocal.get();
+        String projectId = userThreadLocal.get().getProjectId();
         Assert.notNull(projectId, "无法获取项目信息！");
         return projectId;
     }

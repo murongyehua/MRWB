@@ -150,9 +150,9 @@
       version = #{version,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <select id="selectByProject" resultMap="BaseResultMap">
+  <select id="selectByProject" resultMap="BaseResultMap" parameterType="java.lang.String">
     select <include refid="Base_Column_List"/>
     from journal_field
-    where project_id = #{projectId}
+    where project_id = #{projectId,jdbcType=VARCHAR}
   </select>
 </mapper>

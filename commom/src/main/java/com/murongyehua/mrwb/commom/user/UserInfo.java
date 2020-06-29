@@ -17,5 +17,6 @@ public class UserInfo implements Serializable {
     private String nickname;
     private String userId;
     private String userType;
+    private String projectId;
 
 }
