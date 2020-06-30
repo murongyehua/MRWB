@@ -38,6 +38,7 @@
                     type="success"
                     icon="el-icon-plus"
                     class="handle-del mr8"
+                    @click="addJournal"
             >新增</el-button>
             <el-button
                     type="primary"
@@ -129,26 +130,65 @@
                 <el-button type="primary" @click="saveEdit">确 定</el-button>
             </span>
         </el-dialog>
+        <!-- 新增弹出框 -->
+        <el-dialog title="新增" :visible.sync="addVisible" width="30%" center :close-on-click-modal="false" :destroy-on-close="true">
+            <el-form ref="form" :model="form" label-width="70px">
+                <el-form-item label="处理时间">
+                    <el-date-picker
+                            v-model="data.dealDate"
+                            type="date"
+                            placeholder="选择处理时间">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="处理人">
+                    <el-select v-model="data.dealUser" value="" @visible-change="queryUsers">
+                        <el-option v-for="item in users" :value="item.id" :label="item.nickname"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item v-for="item in tableFields" :label="item.fieldName">
+                    <m-diy :type="item.fieldType" :content="item.fieldContent" :id="item.id" v-model="data.fieldData[item.sortnum]"></m-diy>
+                </el-form-item>
+                <el-form-item label="分类">
+                    <el-select v-model="data.tag" value="" @visible-change="queryTags">
+                        <el-option v-for="item in tags" :value="item.id" :label="item.tagname"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="saveAdd">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
+import MDiy from "../../assembly/m-diy/m-diy";
 export default {
     name: 'basetable',
+    components: {MDiy},
     data() {
         return {
             query: {
-                dealDate: '',
-                dealUser: '',
+                dealDate: '', // 查询条件-处理时间
+                dealUser: '', // 查询条件-处理人
                 pageIndex: 1,
                 pageSize: 10
             },
+            data: {
+                dealDate: '',
+                dealUser: '',
+                fieldData: [],
+                tag: ''
+            },
+            tags: [], // 可选分类
+            users: [], // 可选处理人
             tableData: [],
             tableView: true,
             tableFields: [],
             multipleSelection: [],
             delList: [],
             editVisible: false,
+            addVisible: false,
             pageTotal: 0,
             form: {},
             idx: -1,
@@ -192,6 +232,26 @@ export default {
         // 获取 easy-mock 的模拟数据
         getData() {
 
+        },
+        // 获取分类
+        queryTags() {
+            this.API.queryJournalTag().then(res => {
+                if (res.code === '0') {
+                    this.tags = res.rows
+                }
+            })
+        },
+        // 获取用户
+        queryUsers() {
+            this.API.getUsers().then(res => {
+                if (res.code === '0') {
+                    this.users = res.data
+                }
+            })
+        },
+        // 显示新增记录的弹框
+        addJournal() {
+            this.addVisible = true
         },
         // 触发搜索按钮
         handleSearch() {
@@ -238,6 +298,9 @@ export default {
             this.editVisible = false;
             this.$message.success(`修改第 ${this.idx + 1} 行成功`);
             this.$set(this.tableData, this.idx, this.form);
+        },
+        saveAdd() {
+          console.info(this.data)
         },
         // 分页导航
         handlePageChange(val) {

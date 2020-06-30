@@ -38,5 +38,4 @@ public class UserInfoController {
     public PageView queryList(UserListParam param) {
         return userInfoService.queryUserList(param);
     }
-
 }

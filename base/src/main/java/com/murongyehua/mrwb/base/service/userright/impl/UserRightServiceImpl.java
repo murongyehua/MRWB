@@ -2,8 +2,10 @@ package com.murongyehua.mrwb.base.service.userright.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.murongyehua.mrwb.base.dao.mapper.BaseProjectInfoMapper;
+import com.murongyehua.mrwb.base.dao.mapper.BaseUserInfoMapper;
 import com.murongyehua.mrwb.base.dao.mapper.BaseUserRightMapper;
 import com.murongyehua.mrwb.base.dao.po.BaseProjectInfoPO;
+import com.murongyehua.mrwb.base.dao.po.BaseUserInfoPO;
 import com.murongyehua.mrwb.base.service.userright.UserRightService;
 import com.murongyehua.mrwb.commom.ResultContext;
 import com.murongyehua.mrwb.commom.enums.ENUserType;
@@ -26,6 +28,9 @@ public class UserRightServiceImpl implements UserRightService {
     @Autowired
     private BaseProjectInfoMapper projectInfoMapper;
 
+    @Autowired
+    private BaseUserInfoMapper userInfoMapper;
+
     @Override
     public ResultContext getProjects() {
         List<String> projectIds = userRightMapper.distinctProjectId(UserContext.getUserId());
@@ -38,6 +43,18 @@ public class UserRightServiceImpl implements UserRightService {
         }
         List<BaseProjectInfoPO> projects = projectInfoMapper.selectByIds(projectIds);
         resultContext.setData(projects);
+        return resultContext;
+    }
+
+    @Override
+    public ResultContext getUsers() {
+        ResultContext resultContext = ResultContext.success("操作成功");
+        List<String> userIds = userRightMapper.distinctUserId(UserContext.getProjectId());
+        if (CollectionUtil.isEmpty(userIds)) {
+            return ResultContext.businessFail("无可选用户");
+        }
+        List<BaseUserInfoPO> list = userInfoMapper.selectByIds(userIds);
+        resultContext.setData(list);
         return resultContext;
     }
 

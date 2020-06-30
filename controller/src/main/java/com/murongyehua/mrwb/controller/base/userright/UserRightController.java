@@ -23,4 +23,8 @@ public class UserRightController {
         return userRightService.getProjects();
     }
 
+    @PostMapping("/getUsers.do")
+    public ResultContext getUsers() {
+        return userRightService.getUsers();
+    }
 }

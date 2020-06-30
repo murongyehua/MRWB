@@ -20,5 +20,7 @@ public interface BaseUserRightMapper {
 
     List<String> distinctProjectId(@Param("userId") String userId);
 
+    List<String> distinctUserId(@Param("projectId") String projectId);
+
     List<BaseUserRightPO> selectBySelective(BaseUserRightPO record);
 }

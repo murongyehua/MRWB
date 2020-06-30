@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {post, postBlob, put, patch, fetch, jsonPost, filePost} from '../utils/http'
 import {baseUrl} from './apiUrl'
+import {parseMinWidth} from "element-ui/packages/table/src/util";
 
 let url = baseUrl + '/mr'
 
@@ -19,15 +20,18 @@ const user =  {
 const right = {
     getMenu (param) {
         return post(url + '/base/menu/getMenu.do', param)
+    },
+    getProject (param) {
+        return post(url + '/base/userRight/getProjects.do', param)
+    },
+    getUsers (param) {
+        return post(url + '/base/userRight/getUsers.do', param)
     }
 }
 
 const project = {
     queryProjectList (param) {
         return post(url + '/base/project/query.pub', param)
-    },
-    getProject (param) {
-        return post(url + '/base/userRight//getProjects.do', param)
     }
 }
 
@@ -46,6 +50,12 @@ const menu = {
 const journal = {
     getJournalFields (param) {
         return post(url + '/journal/field/getFields.do', param)
+    },
+    addJournalTag (param) {
+        return post(url + '/journal/tag/add.do', param)
+    },
+    queryJournalTag (param) {
+        return post(url + '/journal/tag/query.do', param)
     }
 }
 

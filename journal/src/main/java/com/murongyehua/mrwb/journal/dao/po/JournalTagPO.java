@@ -12,7 +12,17 @@ public class JournalTagPO implements Serializable {
 
     private String tagname;
 
+    private String projectId;
+
     private String createUser;
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
 
     private Date createTime;
 

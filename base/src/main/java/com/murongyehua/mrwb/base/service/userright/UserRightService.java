@@ -10,4 +10,5 @@ public interface UserRightService {
 
     ResultContext getProjects();
 
+    ResultContext getUsers();
 }
