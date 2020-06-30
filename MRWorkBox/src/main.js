@@ -10,6 +10,7 @@ import './assets/css/icon.css';
 import './components/common/directives';
 import 'babel-polyfill';
 import API from './api/api'
+import pub from './utils/public.js'
 
 Vue.config.productionTip = false;
 Vue.use(VueI18n);
@@ -21,6 +22,9 @@ const i18n = new VueI18n({
     locale: 'zh',
     messages
 });
+Vue.prototype.global = {
+    dateFormat: pub.dateFormat
+}
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} | MR`;

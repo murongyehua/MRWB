@@ -130,11 +130,5 @@ public class JournalSummaryPO implements Serializable {
         this.createTime = createTime;
     }
 
-    public String getVersion() {
-        return historyForId;
-    }
 
-    public void setVersion(String historyForId) {
-        this.historyForId = historyForId;
-    }
 }

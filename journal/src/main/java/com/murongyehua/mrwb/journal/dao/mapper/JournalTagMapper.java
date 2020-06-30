@@ -19,4 +19,6 @@ public interface JournalTagMapper {
     int updateByPrimaryKey(JournalTagPO record);
 
     List<JournalTagPO> selectByProjectId(@Param("projectId") String projectId);
+
+    int countByProjectIdAndName(@Param("projectId") String projectId, @Param("tagName") String tagName);
 }

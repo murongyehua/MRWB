@@ -2,6 +2,8 @@ package com.murongyehua.mrwb.journal.dao.mapper;
 
 import com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO;
 
+import java.util.List;
+
 public interface JournalSummaryMapper {
     int deleteByPrimaryKey(String id);
 
@@ -14,4 +16,6 @@ public interface JournalSummaryMapper {
     int updateByPrimaryKeySelective(JournalSummaryPO record);
 
     int updateByPrimaryKey(JournalSummaryPO record);
+
+    List<JournalSummaryPO> selectBySelective(JournalSummaryPO summaryPO);
 }

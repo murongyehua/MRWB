@@ -27,6 +27,10 @@ public class JournalTagServiceImpl implements JournalTagService {
 
     @Override
     public ResultContext addTag(String name) {
+        int count = journalTagMapper.countByProjectIdAndName(UserContext.getProjectId(), name);
+        if (count != 0) {
+            return ResultContext.businessFail("分类已存在");
+        }
         JournalTagPO journalTagPO = new JournalTagPO();
         journalTagPO.setTagname(name);
         journalTagPO.setId(IdUtil.simpleUUID());

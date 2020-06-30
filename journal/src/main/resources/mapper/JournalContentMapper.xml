@@ -1,82 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.murongyehua.mrwb.journal.dao.mapper.JournalContentMapper">
-  <resultMap id="BaseResultMap" type="com.murongyehua.mrwb.journal.dao.po.JournalContentPO">
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="summary_id" jdbcType="VARCHAR" property="summaryId" />
-    <result column="field_id" jdbcType="VARCHAR" property="fieldId" />
-    <result column="content" jdbcType="VARCHAR" property="content" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    id, summary_id, field_id, content
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from journal_content
-    where id = #{id,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from journal_content
-    where id = #{id,jdbcType=VARCHAR}
-  </delete>
-  <insert id="insert" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalContentPO">
-    insert into journal_content (id, summary_id, field_id, 
-      content)
-    values (#{id,jdbcType=VARCHAR}, #{summaryId,jdbcType=VARCHAR}, #{fieldId,jdbcType=VARCHAR}, 
-      #{content,jdbcType=VARCHAR})
-  </insert>
-  <insert id="insertSelective" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalContentPO">
-    insert into journal_content
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="summaryId != null">
-        summary_id,
-      </if>
-      <if test="fieldId != null">
-        field_id,
-      </if>
-      <if test="content != null">
-        content,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="summaryId != null">
-        #{summaryId,jdbcType=VARCHAR},
-      </if>
-      <if test="fieldId != null">
-        #{fieldId,jdbcType=VARCHAR},
-      </if>
-      <if test="content != null">
-        #{content,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalContentPO">
-    update journal_content
-    <set>
-      <if test="summaryId != null">
-        summary_id = #{summaryId,jdbcType=VARCHAR},
-      </if>
-      <if test="fieldId != null">
-        field_id = #{fieldId,jdbcType=VARCHAR},
-      </if>
-      <if test="content != null">
-        content = #{content,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalContentPO">
-    update journal_content
-    set summary_id = #{summaryId,jdbcType=VARCHAR},
-      field_id = #{fieldId,jdbcType=VARCHAR},
-      content = #{content,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
-  </update>
+    <resultMap id="BaseResultMap" type="com.murongyehua.mrwb.journal.dao.po.JournalContentPO">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="summary_id" jdbcType="VARCHAR" property="summaryId"/>
+        <result column="field_id" jdbcType="VARCHAR" property="fieldId"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, summary_id, field_id, content
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from journal_content
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete
+        from journal_content
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalContentPO">
+        insert into journal_content (id, summary_id, field_id,
+                                     content)
+        values (#{id,jdbcType=VARCHAR}, #{summaryId,jdbcType=VARCHAR}, #{fieldId,jdbcType=VARCHAR},
+                #{content,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalContentPO">
+        insert into journal_content
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="summaryId != null">
+                summary_id,
+            </if>
+            <if test="fieldId != null">
+                field_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="summaryId != null">
+                #{summaryId,jdbcType=VARCHAR},
+            </if>
+            <if test="fieldId != null">
+                #{fieldId,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalContentPO">
+        update journal_content
+        <set>
+            <if test="summaryId != null">
+                summary_id = #{summaryId,jdbcType=VARCHAR},
+            </if>
+            <if test="fieldId != null">
+                field_id = #{fieldId,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalContentPO">
+        update journal_content
+        set summary_id = #{summaryId,jdbcType=VARCHAR},
+            field_id   = #{fieldId,jdbcType=VARCHAR},
+            content    = #{content,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into journal_content(id, summary_id, field_id,
+        content)
+        values
+        <foreach collection="list" item="content" separator=",">
+            (#{content.id,jdbcType=VARCHAR}, #{content.summaryId,jdbcType=VARCHAR}, #{content.fieldId,jdbcType=VARCHAR},
+            #{content.content,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
 </mapper>

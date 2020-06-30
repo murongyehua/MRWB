@@ -21,7 +21,7 @@
                 <div class="login-btn">
                     <el-button type="primary" @click="submitForm()">登录</el-button>
                 </div>
-                <p class="login-tips">Tips : ...</p>
+                <p class="login-tips">Tips : MR 工作盒子-高效工作伴侣</p>
             </el-form>
         </div>
     </div>

@@ -30,11 +30,11 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO" useGeneratedKeys="true">
-    insert into journal_summary (project_id, deal_user, deal_date, 
+    insert into journal_summary (id, project_id, deal_user, deal_date,
       `state`, attach, last_modify_time, 
       create_user, create_time, history_for_id, tag_id, title
       )
-    values (#{projectId,jdbcType=VARCHAR}, #{dealUser,jdbcType=VARCHAR}, #{dealDate,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=VARCHAR}, #{projectId,jdbcType=VARCHAR}, #{dealUser,jdbcType=VARCHAR}, #{dealDate,jdbcType=VARCHAR},
       #{state,jdbcType=CHAR}, #{attach,jdbcType=VARCHAR}, #{lastModifyTime,jdbcType=TIMESTAMP}, 
       #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{historyForId,jdbcType=VARCHAR}, #{tagId,jdbcType=VARCHAR},
       #{title,jdbcType=VARCHAR}
@@ -167,4 +167,46 @@
       title = #{title,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectBySelective" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from journal_summary
+    <where>
+      <if test="id != null">
+        id = #{id}
+      </if>
+      <if test="projectId != null">
+        and project_id = #{projectId,jdbcType=VARCHAR}
+      </if>
+      <if test="dealUser != null">
+        and deal_user = #{dealUser,jdbcType=VARCHAR}
+      </if>
+      <if test="dealDate != null">
+        and deal_date = #{dealDate,jdbcType=VARCHAR}
+      </if>
+      <if test="state != null">
+        and state = #{state,jdbcType=CHAR}
+      </if>
+      <if test="attach != null">
+        and attach = #{attach,jdbcType=VARCHAR}
+      </if>
+      <if test="lastModifyTime != null">
+        and last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="createUser != null">
+        and create_user = #{createUser,jdbcType=VARCHAR}
+      </if>
+      <if test="createTime != null">
+        and create_time = #{createTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="historyForId != null">
+        and history_for_id = #{historyForId,jdbcType=VARCHAR}
+      </if>
+      <if test="tagId != null">
+        and tag_id = #{tagId,jdbcType=VARCHAR}
+      </if>
+      <if test="title != null">
+        and title = #{title,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
 </mapper>
