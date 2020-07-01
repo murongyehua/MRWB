@@ -17,6 +17,7 @@
                                 align="right"
                                 unlink-panels
                                 size="mini"
+                                :clearable="false"
                                 start-placeholder="开始日期"
                                 end-placeholder="结束日期"
                                 :picker-options="pickerOptions">
@@ -50,6 +51,7 @@
                     icon="el-icon-delete"
                     class="handle-del mr8"
                     @click="delAllSelection"
+                    v-show="tableView"
             >删除
             </el-button>
             <el-button
@@ -86,12 +88,14 @@
                     @selection-change="handleSelectionChange"
                     v-if="tableView"
             >
-                <el-table-column v-for="item in tableFields" :prop="item.fieldName" :label="item.fieldName"
-                                 align="left"></el-table-column>
-                <el-table-column label="处理时间" prop="dealDate"></el-table-column>
-                <el-table-column label="处理人" prop="dealUserText"></el-table-column>
-                <el-table-column label="创建人" prop="createUserText"></el-table-column>
-                <el-table-column label="分类" prop="tagText"></el-table-column>
+                <el-table-column type="selection"></el-table-column>
+                <el-table-column label="标题" prop="title" show-overflow-tooltip></el-table-column>
+                <el-table-column v-for="item in tableFields" :prop="item.id" :label="item.fieldName"
+                                 align="left" show-overflow-tooltip></el-table-column>
+                <el-table-column label="处理时间" prop="dealDate" show-overflow-tooltip></el-table-column>
+                <el-table-column label="处理人" prop="dealUserText" show-overflow-tooltip></el-table-column>
+                <el-table-column label="创建人" prop="createUserText" show-overflow-tooltip></el-table-column>
+                <el-table-column label="分类" prop="tagText" show-overflow-tooltip></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -111,9 +115,9 @@
             </el-table>
             <el-row>
                 <el-col :span="8">
-                    <el-card class="box-card" v-if="!tableView">
+                    <el-card class="box-card" v-if="!tableView" v-for="item in tableData" :key="item.id">
                         <div slot="header" class="clearfix">
-                            <span>卡片名称</span>
+                            <span class="card">{{item.title}}</span>
                             <el-button
                                     type="text"
                                     icon="el-icon-edit"
@@ -129,9 +133,13 @@
                             >查看历史
                             </el-button>
                         </div>
-                        <div v-for="o in 4" :key="o" class="text item">
-                            {{'列表内容 ' + o }}
+                        <div v-for="o in tableFields" :key="o.id" class="text item card">
+                            <b>{{o.fieldName + ': '}}</b>{{item[o.id]}}
                         </div>
+                        <div class="text item card"><b>处理时间：</b>{{item.title}}</div>
+                        <div class="text item card"><b>处理人：</b>{{item.dealUserText}}</div>
+                        <div class="text item card"><b>创建人：</b>{{item.createUserText}}</div>
+                        <div class="text item card"><b>分类：</b>{{item.tagText}}</div>
                     </el-card>
                 </el-col>
             </el-row>
@@ -296,6 +304,7 @@
                     dealDateEnd: this.global.dateFormat('yyyy-MM-dd', this.query.dealDate[1]),
                     dealUser: this.query.dealUser,
                     tag: this.query.tag,
+                    titleLike: this.query.titleLike,
                     pageSize: this.query.pageSize,
                     pageNum: this.query.pageNum,
                     sortName: this.query.sortName,
@@ -305,6 +314,11 @@
                     if (res.code === '0') {
                         this.pageTotal = res.total
                         this.tableData = res.rows
+                        for (let i=0;i< this.tableData.length;i++) {
+                            for (let j=0; j< this.tableData[i].contents.length; j++) {
+                                this.$set(this.tableData[i], this.tableData[i].contents[j].fieldId, this.tableData[i].contents[j].content)
+                            }
+                        }
                     }
                 })
             },
@@ -333,7 +347,7 @@
             },
             // 触发搜索按钮
             handleSearch() {
-                this.$set(this.query, 'pageIndex', 1);
+                this.$set(this.query, 'pageNum', 1);
                 this.getData();
             },
             // 删除操作
@@ -365,6 +379,9 @@
             },
             changeView() {
                 this.tableView = !this.tableView
+                if (!this.tableView) {
+                    this.$message.info('切换视图功能 并不稳定')
+                }
             },
             // 编辑操作
             handleEdit(index, row) {
@@ -487,5 +504,8 @@
         margin: auto;
         width: 40px;
         height: 40px;
+    }
+    .card {
+        word-wrap:break-word
     }
 </style>
