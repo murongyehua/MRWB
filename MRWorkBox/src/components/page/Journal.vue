@@ -28,10 +28,10 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="标题关键字">
-                        <el-input size="mini" v-model="query.dealUser"/>
+                        <el-input size="mini" v-model="query.titleLike"/>
                     </el-form-item>
                     <el-form-item label="分类">
-                        <el-select size="mini" v-model="query.dealUser" value="">
+                        <el-select size="mini" v-model="query.tag" value="">
                             <el-option v-for="item in tags" :value="item.id" :label="item.tagname"></el-option>
                         </el-select>
                     </el-form-item>
@@ -89,7 +89,9 @@
                 <el-table-column v-for="item in tableFields" :prop="item.fieldName" :label="item.fieldName"
                                  align="left"></el-table-column>
                 <el-table-column label="处理时间" prop="dealDate"></el-table-column>
-                <el-table-column label="处理人" prop="dealUser"></el-table-column>
+                <el-table-column label="处理人" prop="dealUserText"></el-table-column>
+                <el-table-column label="创建人" prop="createUserText"></el-table-column>
+                <el-table-column label="分类" prop="tagText"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -101,7 +103,6 @@
                         <el-button
                                 type="text"
                                 icon="el-icon-delete"
-                                class="red"
                                 @click="handleDelete(scope.$index, scope.row)"
                         >查看历史
                         </el-button>
@@ -123,7 +124,6 @@
                             <el-button
                                     type="text"
                                     icon="el-icon-delete"
-                                    class="red"
                                     style="float: right; padding: 3px 0"
                                     @click="handleDelete(scope.$index, scope.row)"
                             >查看历史
@@ -219,10 +219,14 @@
         data() {
             return {
                 query: {
-                    dealDate: '', // 查询条件-处理时间
+                    dealDate: [new Date(),new Date()], // 查询条件-处理时间
                     dealUser: '', // 查询条件-处理人
-                    pageIndex: 1,
-                    pageSize: 10
+                    titleLike: '',
+                    tag: '',
+                    pageNum: 1,
+                    pageSize: 20,
+                    sortName: 'last_modify_time',
+                    sortType: 'desc'
                 },
                 data: {
                     dealDate: '',
@@ -286,9 +290,23 @@
             this.queryUsers();
         },
         methods: {
-            // 获取 easy-mock 的模拟数据
             getData() {
-
+                let param = {
+                    dealDateStart: this.global.dateFormat('yyyy-MM-dd', this.query.dealDate[0]),
+                    dealDateEnd: this.global.dateFormat('yyyy-MM-dd', this.query.dealDate[1]),
+                    dealUser: this.query.dealUser,
+                    tag: this.query.tag,
+                    pageSize: this.query.pageSize,
+                    pageNum: this.query.pageNum,
+                    sortName: this.query.sortName,
+                    sortType: this.query.sortType
+                }
+                this.API.queryJournalSummary(param).then(res =>{
+                    if (res.code === '0') {
+                        this.pageTotal = res.total
+                        this.tableData = res.rows
+                    }
+                })
             },
             // 获取分类
             queryTags() {

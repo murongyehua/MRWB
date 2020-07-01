@@ -59,6 +59,9 @@ const journal = {
     },
     addJournalSummary (param) {
         return jsonPost(url + '/journal/summary/add.do', param)
+    },
+    queryJournalSummary (param) {
+        return post(url + '/journal/summary/query.do', param)
     }
 }
 

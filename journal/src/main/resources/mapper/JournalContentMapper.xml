@@ -89,4 +89,8 @@
             #{content.content,jdbcType=VARCHAR})
         </foreach>
     </insert>
+    <select id="selectBySummaryId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select <include refid="Base_Column_List"/>
+        from journal_content where summary_id = #{summaryId}
+    </select>
 </mapper>

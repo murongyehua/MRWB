@@ -1,212 +1,252 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.murongyehua.mrwb.journal.dao.mapper.JournalSummaryMapper">
-  <resultMap id="BaseResultMap" type="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO">
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="project_id" jdbcType="VARCHAR" property="projectId" />
-    <result column="deal_user" jdbcType="VARCHAR" property="dealUser" />
-    <result column="deal_date" jdbcType="VARCHAR" property="dealDate" />
-    <result column="state" jdbcType="CHAR" property="state" />
-    <result column="attach" jdbcType="VARCHAR" property="attach" />
-    <result column="last_modify_time" jdbcType="TIMESTAMP" property="lastModifyTime" />
-    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="history_for_id" jdbcType="VARCHAR" property="historyForId" />
-    <result column="tag_id" jdbcType="VARCHAR" property="tagId" />
-    <result column="title" jdbcType="VARCHAR" property="title" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    id, project_id, deal_user, deal_date, `state`, attach, last_modify_time, create_user, 
+    <resultMap id="BaseResultMap" type="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="project_id" jdbcType="VARCHAR" property="projectId"/>
+        <result column="deal_user" jdbcType="VARCHAR" property="dealUser"/>
+        <result column="deal_date" jdbcType="VARCHAR" property="dealDate"/>
+        <result column="state" jdbcType="CHAR" property="state"/>
+        <result column="attach" jdbcType="VARCHAR" property="attach"/>
+        <result column="last_modify_time" jdbcType="TIMESTAMP" property="lastModifyTime"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="history_for_id" jdbcType="VARCHAR" property="historyForId"/>
+        <result column="tag_id" jdbcType="VARCHAR" property="tagId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, project_id, deal_user, deal_date, `state`, attach, last_modify_time, create_user,
     create_time, history_for_id, tag_id, title
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from journal_summary
-    where id = #{id,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from journal_summary
-    where id = #{id,jdbcType=VARCHAR}
-  </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO" useGeneratedKeys="true">
-    insert into journal_summary (id, project_id, deal_user, deal_date,
-      `state`, attach, last_modify_time, 
-      create_user, create_time, history_for_id, tag_id, title
-      )
-    values (#{id,jdbcType=VARCHAR}, #{projectId,jdbcType=VARCHAR}, #{dealUser,jdbcType=VARCHAR}, #{dealDate,jdbcType=VARCHAR},
-      #{state,jdbcType=CHAR}, #{attach,jdbcType=VARCHAR}, #{lastModifyTime,jdbcType=TIMESTAMP}, 
-      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{historyForId,jdbcType=VARCHAR}, #{tagId,jdbcType=VARCHAR},
-      #{title,jdbcType=VARCHAR}
-      )
-  </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO" useGeneratedKeys="true">
-    insert into journal_summary
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="projectId != null">
-        project_id,
-      </if>
-      <if test="dealUser != null">
-        deal_user,
-      </if>
-      <if test="dealDate != null">
-        deal_date,
-      </if>
-      <if test="state != null">
-        `state`,
-      </if>
-      <if test="attach != null">
-        attach,
-      </if>
-      <if test="lastModifyTime != null">
-        last_modify_time,
-      </if>
-      <if test="createUser != null">
-        create_user,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="historyForId != null">
-          history_for_id,
-      </if>
-      <if test="tagId != null">
-        tag_id,
-      </if>
-      <if test="title != null">
-        title,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="projectId != null">
-        #{projectId,jdbcType=VARCHAR},
-      </if>
-      <if test="dealUser != null">
-        #{dealUser,jdbcType=VARCHAR},
-      </if>
-      <if test="dealDate != null">
-        #{dealDate,jdbcType=VARCHAR},
-      </if>
-      <if test="state != null">
-        #{state,jdbcType=CHAR},
-      </if>
-      <if test="attach != null">
-        #{attach,jdbcType=VARCHAR},
-      </if>
-      <if test="lastModifyTime != null">
-        #{lastModifyTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createUser != null">
-        #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="historyForId != null">
-        #{historyForId,jdbcType=VARCHAR},
-      </if>
-      <if test="tagId != null">
-        #{tagId,jdbcType=VARCHAR},
-      </if>
-      <if test="title != null">
-        #{title,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO">
-    update journal_summary
-    <set>
-      <if test="projectId != null">
-        project_id = #{projectId,jdbcType=VARCHAR},
-      </if>
-      <if test="dealUser != null">
-        deal_user = #{dealUser,jdbcType=VARCHAR},
-      </if>
-      <if test="dealDate != null">
-        deal_date = #{dealDate,jdbcType=VARCHAR},
-      </if>
-      <if test="state != null">
-        `state` = #{state,jdbcType=CHAR},
-      </if>
-      <if test="attach != null">
-        attach = #{attach,jdbcType=VARCHAR},
-      </if>
-      <if test="lastModifyTime != null">
-        last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createUser != null">
-        create_user = #{createUser,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="historyForId != null">
-          history_for_id = #{historyForId,jdbcType=VARCHAR},
-      </if>
-      <if test="tagId != null">
-        tag_id = #{tagId,jdbcType=VARCHAR},
-      </if>
-      <if test="title != null">
-        title = #{title,jdbcType=VARCHAR}
-      </if>
-    </set>
-    where id = #{id,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO">
-    update journal_summary
-    set project_id = #{projectId,jdbcType=VARCHAR},
-      deal_user = #{dealUser,jdbcType=VARCHAR},
-      deal_date = #{dealDate,jdbcType=VARCHAR},
-      `state` = #{state,jdbcType=CHAR},
-      attach = #{attach,jdbcType=VARCHAR},
-      last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP},
-      create_user = #{createUser,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      history_for_id = #{historyForId,jdbcType=VARCHAR},
-      tag_id = #{tagId,jdbcType=VARCHAR},
-      title = #{title,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
-  </update>
-  <select id="selectBySelective" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"/>
-    from journal_summary
-    <where>
-      <if test="id != null">
-        id = #{id}
-      </if>
-      <if test="projectId != null">
-        and project_id = #{projectId,jdbcType=VARCHAR}
-      </if>
-      <if test="dealUser != null">
-        and deal_user = #{dealUser,jdbcType=VARCHAR}
-      </if>
-      <if test="dealDate != null">
-        and deal_date = #{dealDate,jdbcType=VARCHAR}
-      </if>
-      <if test="state != null">
-        and state = #{state,jdbcType=CHAR}
-      </if>
-      <if test="attach != null">
-        and attach = #{attach,jdbcType=VARCHAR}
-      </if>
-      <if test="lastModifyTime != null">
-        and last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP}
-      </if>
-      <if test="createUser != null">
-        and create_user = #{createUser,jdbcType=VARCHAR}
-      </if>
-      <if test="createTime != null">
-        and create_time = #{createTime,jdbcType=TIMESTAMP}
-      </if>
-      <if test="historyForId != null">
-        and history_for_id = #{historyForId,jdbcType=VARCHAR}
-      </if>
-      <if test="tagId != null">
-        and tag_id = #{tagId,jdbcType=VARCHAR}
-      </if>
-      <if test="title != null">
-        and title = #{title,jdbcType=VARCHAR}
-      </if>
-    </where>
-  </select>
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from journal_summary
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete
+        from journal_summary
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id"
+            parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO" useGeneratedKeys="true">
+        insert into journal_summary (id, project_id, deal_user, deal_date,
+            ` state `, attach, last_modify_time,
+                                     create_user, create_time, history_for_id, tag_id, title)
+        values (#{id,jdbcType=VARCHAR}, #{projectId,jdbcType=VARCHAR}, #{dealUser,jdbcType=VARCHAR},
+                #{dealDate,jdbcType=VARCHAR},
+                #{state,jdbcType=CHAR}, #{attach,jdbcType=VARCHAR}, #{lastModifyTime,jdbcType=TIMESTAMP},
+                #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{historyForId,jdbcType=VARCHAR},
+                #{tagId,jdbcType=VARCHAR},
+                #{title,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO" useGeneratedKeys="true">
+        insert into journal_summary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">
+                project_id,
+            </if>
+            <if test="dealUser != null">
+                deal_user,
+            </if>
+            <if test="dealDate != null">
+                deal_date,
+            </if>
+            <if test="state != null">
+                `state`,
+            </if>
+            <if test="attach != null">
+                attach,
+            </if>
+            <if test="lastModifyTime != null">
+                last_modify_time,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="historyForId != null">
+                history_for_id,
+            </if>
+            <if test="tagId != null">
+                tag_id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">
+                #{projectId,jdbcType=VARCHAR},
+            </if>
+            <if test="dealUser != null">
+                #{dealUser,jdbcType=VARCHAR},
+            </if>
+            <if test="dealDate != null">
+                #{dealDate,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=CHAR},
+            </if>
+            <if test="attach != null">
+                #{attach,jdbcType=VARCHAR},
+            </if>
+            <if test="lastModifyTime != null">
+                #{lastModifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null">
+                #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="historyForId != null">
+                #{historyForId,jdbcType=VARCHAR},
+            </if>
+            <if test="tagId != null">
+                #{tagId,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO">
+        update journal_summary
+        <set>
+            <if test="projectId != null">
+                project_id = #{projectId,jdbcType=VARCHAR},
+            </if>
+            <if test="dealUser != null">
+                deal_user = #{dealUser,jdbcType=VARCHAR},
+            </if>
+            <if test="dealDate != null">
+                deal_date = #{dealDate,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                `state` = #{state,jdbcType=CHAR},
+            </if>
+            <if test="attach != null">
+                attach = #{attach,jdbcType=VARCHAR},
+            </if>
+            <if test="lastModifyTime != null">
+                last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="historyForId != null">
+                history_for_id = #{historyForId,jdbcType=VARCHAR},
+            </if>
+            <if test="tagId != null">
+                tag_id = #{tagId,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO">
+        update journal_summary
+        set project_id = #{projectId,jdbcType=VARCHAR},
+            deal_user  = #{dealUser,jdbcType=VARCHAR},
+            deal_date  = #{dealDate,jdbcType=VARCHAR},
+            ` state ` =
+            #{state,jdbcType=CHAR},
+            attach =
+            #{attach,jdbcType=VARCHAR},
+            last_modify_time =
+            #{lastModifyTime,jdbcType=TIMESTAMP},
+            create_user =
+            #{createUser,jdbcType=VARCHAR},
+            create_time =
+            #{createTime,jdbcType=TIMESTAMP},
+            history_for_id =
+            #{historyForId,jdbcType=VARCHAR},
+            tag_id =
+            #{tagId,jdbcType=VARCHAR},
+            title =
+            #{title,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <select id="selectBySelective" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from journal_summary
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="projectId != null">
+                and project_id = #{projectId,jdbcType=VARCHAR}
+            </if>
+            <if test="dealUser != null">
+                and deal_user = #{dealUser,jdbcType=VARCHAR}
+            </if>
+            <if test="dealDate != null">
+                and deal_date = #{dealDate,jdbcType=VARCHAR}
+            </if>
+            <if test="state != null">
+                and state = #{state,jdbcType=CHAR}
+            </if>
+            <if test="attach != null">
+                and attach = #{attach,jdbcType=VARCHAR}
+            </if>
+            <if test="lastModifyTime != null">
+                and last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createUser != null">
+                and create_user = #{createUser,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="historyForId != null">
+                and history_for_id = #{historyForId,jdbcType=VARCHAR}
+            </if>
+            <if test="tagId != null">
+                and tag_id = #{tagId,jdbcType=VARCHAR}
+            </if>
+            <if test="title != null">
+                and title = #{title,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    <select id="query" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from journal_summary
+        <where>
+            <if test="projectId != null and projectId != ''">
+                project_id = #{projectId}
+            </if>
+            <if test="dealUser != null and dealUser != ''">
+                and deal_user = #{dealUser}
+            </if>
+            <if test="tag != null and tag != ''">
+                and tag_id = #{tag}
+            </if>
+            <if test="titleLike != null and titleLike != ''">
+                and title like CONCAT(CONCAT('%',#{titleLike}),'%')
+            </if>
+            <if test="dealDateStart != null">
+                and deal_date &gt;= #{dealDateStart}
+            </if>
+            <if test="dealDateEnd != null">
+                and deal_date &lt;= #{dealDateEnd}
+            </if>
+            <if test="state != null">
+                and state = #{state,jdbcType=CHAR}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.murongyehua.mrwb.api.param.journal;
 
+import com.murongyehua.mrwb.commom.BaseQueryParams;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,11 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class JournalSummaryParam {
+public class JournalSummaryParam extends BaseQueryParams {
+
+    private static final long serialVersionUID = 3199067683499505699L;
+
+    private String projectId;
 
     private String dealDateStart;
 
@@ -20,5 +25,7 @@ public class JournalSummaryParam {
     private String tag;
 
     private String titleLike;
+
+    private String state;
 
 }

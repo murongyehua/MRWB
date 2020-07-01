@@ -3,17 +3,24 @@ package com.murongyehua.mrwb.journal.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.IdUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.murongyehua.mrwb.api.param.journal.JournalSummaryParam;
 import com.murongyehua.mrwb.api.req.journal.JournalSummaryAddReq;
+import com.murongyehua.mrwb.api.resp.journal.JournalFieldContentResp;
+import com.murongyehua.mrwb.api.resp.journal.JournalSummaryQueryResp;
+import com.murongyehua.mrwb.base.dao.mapper.BaseUserInfoMapper;
 import com.murongyehua.mrwb.commom.PageView;
 import com.murongyehua.mrwb.commom.ResultContext;
 import com.murongyehua.mrwb.commom.enums.ENCommonState;
 import com.murongyehua.mrwb.commom.enums.ENJournalState;
+import com.murongyehua.mrwb.commom.enums.ENMsgCode;
 import com.murongyehua.mrwb.commom.exception.MRBaseException;
 import com.murongyehua.mrwb.commom.user.UserContext;
 import com.murongyehua.mrwb.journal.dao.mapper.JournalContentMapper;
 import com.murongyehua.mrwb.journal.dao.mapper.JournalFieldMapper;
 import com.murongyehua.mrwb.journal.dao.mapper.JournalSummaryMapper;
+import com.murongyehua.mrwb.journal.dao.mapper.JournalTagMapper;
 import com.murongyehua.mrwb.journal.dao.po.JournalContentPO;
 import com.murongyehua.mrwb.journal.dao.po.JournalFieldPO;
 import com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO;
@@ -41,6 +48,12 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
 
     @Autowired
     private JournalContentMapper contentMapper;
+
+    @Autowired
+    private BaseUserInfoMapper userInfoMapper;
+
+    @Autowired
+    private JournalTagMapper tagMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -77,7 +90,37 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
 
     @Override
     public PageView queryList(JournalSummaryParam param) {
-        return null;
+        param.setState(ENJournalState.ACTIVE.getValue());
+        param.setProjectId(UserContext.getProjectId());
+        PageHelper.startPage(param.getPageNum(), param.getPageSize(), param.getOrderBy());
+        PageInfo pageInfo = new PageInfo(summaryMapper.query(param));
+        PageView pageView = new PageView();
+        pageView.setCode(ENMsgCode.SUCCESS.getValue());
+        pageView.setRows(this.getRespList(pageInfo.getList()));
+        pageView.setTotal(pageInfo.getTotal());
+        return pageView;
+    }
+
+    private List<JournalSummaryQueryResp> getRespList(List<JournalSummaryPO> list) {
+        List<JournalSummaryQueryResp> summaryQueryResps = new ArrayList<>();
+        list.forEach(x -> {
+            JournalSummaryQueryResp summaryQueryResp = new JournalSummaryQueryResp();
+            BeanUtil.copyProperties(x, summaryQueryResp);
+            List<JournalContentPO> contents = contentMapper.selectBySummaryId(x.getId());
+            List<JournalFieldContentResp> contentResps = new ArrayList<>();
+            contents.forEach(y -> {
+                JournalFieldContentResp fieldContentResp = new JournalFieldContentResp();
+                fieldContentResp.setContent(y.getContent());
+                fieldContentResp.setFieldId(y.getFieldId());
+                contentResps.add(fieldContentResp);
+            });
+            summaryQueryResp.setCreateUserText(userInfoMapper.selectByPrimaryKey(x.getCreateUser()).getNickname());
+            summaryQueryResp.setDealUserText(userInfoMapper.selectByPrimaryKey(x.getDealUser()).getNickname());
+            summaryQueryResp.setTagText(tagMapper.selectByPrimaryKey(x.getTagId()).getTagname());
+            summaryQueryResp.setContents(contentResps);
+            summaryQueryResps.add(summaryQueryResp);
+        });
+        return summaryQueryResps;
     }
 
     private JournalSummaryPO req2JournalSummaryPo(JournalSummaryAddReq req) {

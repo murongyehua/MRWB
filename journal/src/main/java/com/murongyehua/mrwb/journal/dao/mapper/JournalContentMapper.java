@@ -19,4 +19,6 @@ public interface JournalContentMapper {
     int updateByPrimaryKey(JournalContentPO record);
 
     int insertBatch(@Param("list") List<JournalContentPO> contentPOS);
+
+    List<JournalContentPO> selectBySummaryId(@Param("summaryId") String summaryId);
 }
