@@ -94,8 +94,6 @@
                                  align="left" show-overflow-tooltip></el-table-column>
                 <el-table-column label="处理时间" prop="dealDate" show-overflow-tooltip></el-table-column>
                 <el-table-column label="处理人" prop="dealUserText" show-overflow-tooltip></el-table-column>
-                <el-table-column label="创建人" prop="createUserText" show-overflow-tooltip></el-table-column>
-                <el-table-column label="分类" prop="tagText" show-overflow-tooltip></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -138,8 +136,6 @@
                         </div>
                         <div class="text item card"><b>处理时间：</b>{{item.title}}</div>
                         <div class="text item card"><b>处理人：</b>{{item.dealUserText}}</div>
-                        <div class="text item card"><b>创建人：</b>{{item.createUserText}}</div>
-                        <div class="text item card"><b>分类：</b>{{item.tagText}}</div>
                     </el-card>
                 </el-col>
             </el-row>
@@ -380,7 +376,7 @@
             changeView() {
                 this.tableView = !this.tableView
                 if (!this.tableView) {
-                    this.$message.info('切换视图功能 并不稳定')
+                    this.$message.info('切换视图功能为试行版 并不稳定')
                 }
             },
             // 编辑操作
