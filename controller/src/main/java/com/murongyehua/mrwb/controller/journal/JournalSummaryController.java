@@ -1,7 +1,7 @@
 package com.murongyehua.mrwb.controller.journal;
 
 import com.murongyehua.mrwb.api.param.journal.JournalSummaryParam;
-import com.murongyehua.mrwb.api.req.journal.JournalSummaryAddReq;
+import com.murongyehua.mrwb.api.req.journal.JournalSummaryReq;
 import com.murongyehua.mrwb.commom.PageView;
 import com.murongyehua.mrwb.commom.ResultContext;
 import com.murongyehua.mrwb.journal.service.JournalSummaryService;
@@ -23,7 +23,7 @@ public class JournalSummaryController {
     private JournalSummaryService summaryService;
 
     @PostMapping("/add.do")
-    public ResultContext add(@RequestBody JournalSummaryAddReq addReq) {
+    public ResultContext add(@RequestBody JournalSummaryReq addReq) {
         return summaryService.addSummary(addReq);
     }
 
@@ -32,4 +32,23 @@ public class JournalSummaryController {
         return summaryService.queryList(param);
     }
 
+    @PostMapping("/getById.do")
+    public ResultContext getById(String summaryId) {
+        return summaryService.getById(summaryId);
+    }
+
+    @PostMapping("/edit.do")
+    public ResultContext edit(@RequestBody JournalSummaryReq editReq) {
+        return summaryService.editSummary(editReq);
+    }
+
+    @PostMapping("/queryHistory.do")
+    public PageView queryHistory(String summaryId) {
+        return summaryService.queryHistory(summaryId);
+    }
+
+    @PostMapping("/delete.do")
+    public ResultContext delete(@RequestBody JournalSummaryReq deleteReq) {
+        return summaryService.delete(deleteReq);
+    }
 }

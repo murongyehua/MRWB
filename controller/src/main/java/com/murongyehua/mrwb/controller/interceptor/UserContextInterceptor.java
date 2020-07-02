@@ -49,7 +49,6 @@ public class UserContextInterceptor extends HandlerInterceptorAdapter {
                 return false;
             }
         } else {
-            log.info("当前用户: [{}]", userInfo.getNickname());
             // .smg只有系统管理员放行
             if (servletPath.contains(SYSTEM_MANAGER_OPER) && !ENUserType.MANAGER.getValue().equals(userInfo.getUserType())) {
                 response.setContentType("application/json");

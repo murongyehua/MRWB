@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class JournalSummaryAddReq {
+public class JournalSummaryReq {
 
     private String dealUser;
 
@@ -26,4 +26,9 @@ public class JournalSummaryAddReq {
 
     private List<String> fieldContents;
 
+    private String id;
+
+    private List<String> ids;
+
+    private String state;
 }

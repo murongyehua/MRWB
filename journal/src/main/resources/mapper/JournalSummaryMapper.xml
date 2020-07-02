@@ -33,7 +33,7 @@
     <insert id="insert" keyColumn="id" keyProperty="id"
             parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO" useGeneratedKeys="true">
         insert into journal_summary (id, project_id, deal_user, deal_date,
-            ` state `, attach, last_modify_time,
+                                     state, attach, last_modify_time,
                                      create_user, create_time, history_for_id, tag_id, title)
         values (#{id,jdbcType=VARCHAR}, #{projectId,jdbcType=VARCHAR}, #{dealUser,jdbcType=VARCHAR},
                 #{dealDate,jdbcType=VARCHAR},
@@ -249,4 +249,10 @@
             </if>
         </where>
     </select>
+    <update id="updateStateByIds">
+        update journal_summary set state = #{state} where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
 </mapper>

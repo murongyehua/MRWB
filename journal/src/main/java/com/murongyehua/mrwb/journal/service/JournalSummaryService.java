@@ -1,9 +1,11 @@
 package com.murongyehua.mrwb.journal.service;
 
 import com.murongyehua.mrwb.api.param.journal.JournalSummaryParam;
-import com.murongyehua.mrwb.api.req.journal.JournalSummaryAddReq;
+import com.murongyehua.mrwb.api.req.journal.JournalSummaryReq;
 import com.murongyehua.mrwb.commom.PageView;
 import com.murongyehua.mrwb.commom.ResultContext;
+
+import java.util.List;
 
 /**
  * @author liul
@@ -11,8 +13,16 @@ import com.murongyehua.mrwb.commom.ResultContext;
  */
 public interface JournalSummaryService {
 
-    ResultContext addSummary(JournalSummaryAddReq addReq);
+    ResultContext addSummary(JournalSummaryReq addReq);
 
     PageView queryList(JournalSummaryParam param);
+
+    ResultContext getById(String summaryId);
+
+    ResultContext editSummary(JournalSummaryReq editReq);
+
+    PageView queryHistory(String summaryId);
+
+    ResultContext delete(JournalSummaryReq deleteReq);
 
 }

@@ -9,6 +9,40 @@
         </div>
         <div class="container">
             <div class="handle-box">
+                <el-drawer
+                        :title="detail.title"
+                        :visible.sync="drawer">
+                    <el-row>
+                        <el-col :span="12">
+                            <span><b>处理人: </b></span>{{detail.dealUserText}}
+                        </el-col>
+                        <el-col :span="12">
+                            <span><b>处理时间: </b></span>{{detail.dealDate}}
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="12">
+                            <span><b>创建人: </b></span>{{detail.createUserText}}
+                        </el-col>
+                        <el-col :span="12">
+                            <span><b>创建时间: </b></span>{{detail.createTimeText}}
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="12">
+                            <span><b>最后修改时间: </b></span>{{detail.lastModifyTimeText}}
+                        </el-col>
+                        <el-col :span="12">
+                            <span><b>分类: </b></span>{{detail.tagText}}
+                        </el-col>
+                    </el-row>
+                    <br>
+                    <hr>
+                    <br>
+                    <el-row v-for="item in tableFields" class="card">
+                        <span><b>{{item.fieldName + ': '}}</b></span>{{detail[item.fieldName]}}
+                    </el-row>
+                </el-drawer>
                 <el-form :inline="true">
                     <el-form-item label="处理时间">
                         <el-date-picker
@@ -86,6 +120,7 @@
                     ref="multipleTable"
                     header-cell-class-name="table-header"
                     @selection-change="handleSelectionChange"
+                    @row-dblclick="dbClick"
                     v-if="tableView"
             >
                 <el-table-column type="selection"></el-table-column>
@@ -112,38 +147,36 @@
                 </el-table-column>
             </el-table>
             <el-row>
-                <el-col :span="8">
-                    <el-card class="box-card" v-if="!tableView" v-for="item in tableData" :key="item.id">
-                        <div slot="header" class="clearfix">
-                            <span class="card">{{item.title}}</span>
-                            <el-button
-                                    type="text"
-                                    icon="el-icon-edit"
-                                    style="float: right; padding: 3px 0"
-                                    @click="handleEdit(scope.$index, scope.row)"
-                            >编辑
-                            </el-button>
-                            <el-button
-                                    type="text"
-                                    icon="el-icon-delete"
-                                    style="float: right; padding: 3px 0"
-                                    @click="handleDelete(scope.$index, scope.row)"
-                            >查看历史
-                            </el-button>
-                        </div>
-                        <div v-for="o in tableFields" :key="o.id" class="text item card">
-                            <b>{{o.fieldName + ': '}}</b>{{item[o.id]}}
-                        </div>
-                        <div class="text item card"><b>处理时间：</b>{{item.title}}</div>
-                        <div class="text item card"><b>处理人：</b>{{item.dealUserText}}</div>
-                    </el-card>
-                </el-col>
+                <el-card class="box-card" v-if="!tableView" v-for="item in tableData" :key="item.id">
+                    <div slot="header" class="clearfix">
+                        <span class="card">{{item.title}}</span>
+                        <el-button
+                                type="text"
+                                icon="el-icon-edit"
+                                style="float: right; padding: 3px 0"
+                                @click="handleEdit(scope.$index, scope.row)"
+                        >编辑
+                        </el-button>
+                        <el-button
+                                type="text"
+                                icon="el-icon-delete"
+                                style="float: right; padding: 3px 0"
+                                @click="handleDelete(scope.$index, scope.row)"
+                        >查看历史
+                        </el-button>
+                    </div>
+                    <div v-for="o in tableFields" :key="o.id" class="text item card">
+                        <b>{{o.fieldName + ': '}}</b>{{item[o.id]}}
+                    </div>
+                    <div class="text item card"><b>处理时间：</b>{{item.title}}</div>
+                    <div class="text item card"><b>处理人：</b>{{item.dealUserText}}</div>
+                </el-card>
             </el-row>
             <div class="pagination">
                 <el-pagination
                         background
                         layout="total, prev, pager, next"
-                        :current-page="query.pageIndex"
+                        :current-page="query.pageNum"
                         :page-size="query.pageSize"
                         :total="pageTotal"
                         @current-change="handlePageChange"
@@ -223,12 +256,12 @@
         data() {
             return {
                 query: {
-                    dealDate: [new Date(),new Date()], // 查询条件-处理时间
+                    dealDate: [new Date(), new Date()], // 查询条件-处理时间
                     dealUser: '', // 查询条件-处理人
                     titleLike: '',
                     tag: '',
                     pageNum: 1,
-                    pageSize: 20,
+                    pageSize: 10,
                     sortName: 'last_modify_time',
                     sortType: 'desc'
                 },
@@ -239,8 +272,9 @@
                     tag: '',
                     title: ''
                 },
+                detail: {},
                 tagData: {
-                  tagName: ''
+                    tagName: ''
                 },
                 tags: [], // 可选分类
                 users: [], // 可选处理人
@@ -252,6 +286,7 @@
                 editVisible: false,
                 addVisible: false,
                 addTagVisible: false,
+                drawer: false,
                 pageTotal: 0,
                 form: {},
                 idx: -1,
@@ -306,12 +341,12 @@
                     sortName: this.query.sortName,
                     sortType: this.query.sortType
                 }
-                this.API.queryJournalSummary(param).then(res =>{
+                this.API.queryJournalSummary(param).then(res => {
                     if (res.code === '0') {
                         this.pageTotal = res.total
                         this.tableData = res.rows
-                        for (let i=0;i< this.tableData.length;i++) {
-                            for (let j=0; j< this.tableData[i].contents.length; j++) {
+                        for (let i = 0; i < this.tableData.length; i++) {
+                            for (let j = 0; j < this.tableData[i].contents.length; j++) {
                                 this.$set(this.tableData[i], this.tableData[i].contents[j].fieldId, this.tableData[i].contents[j].content)
                             }
                         }
@@ -363,6 +398,11 @@
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
+            dbClick(val) {
+                console.info(val)
+                this.detail = val
+                this.drawer = true
+            },
             delAllSelection() {
                 const length = this.multipleSelection.length;
                 let str = '';
@@ -397,7 +437,7 @@
                     this.$message.warning('存在必填的未填项')
                     return
                 }
-                for (let i=0; i<this.data.fieldData.length; i++) {
+                for (let i = 0; i < this.data.fieldData.length; i++) {
                     if (!this.data.fieldData[i] || this.data.fieldData[i].length === 0) {
                         this.$message.warning('存在必填的未填项')
                         return
@@ -420,7 +460,7 @@
                     return
                 }
                 let fieldContents = this.data.fieldData
-                for (let i=0; i<this.data.fieldData.length; i++) {
+                for (let i = 0; i < this.data.fieldData.length; i++) {
                     console.info(Array.isArray(this.data.fieldData[i]))
                     if (Array.isArray(this.data.fieldData[i])) {
                         fieldContents[i] = this.data.fieldData[i].join('`||@')
@@ -428,7 +468,7 @@
                 }
                 let data = {
                     dealUser: this.data.dealUser,
-                    dealDate: this.global.dateFormat('yyyy-MM-dd',this.data.dealDate),
+                    dealDate: this.global.dateFormat('yyyy-MM-dd', this.data.dealDate),
                     tagId: this.data.tag,
                     title: this.data.title,
                     fieldContents: fieldContents
@@ -437,6 +477,7 @@
                     if (res.code === '0') {
                         this.$message.success(res.info)
                         this.addVisible = false
+                        this.getData()
                     }
                 })
             },
@@ -449,14 +490,14 @@
                     if (res.code === '0') {
                         this.$message.success(res.info)
                         this.addTagVisible = false
-                    }else {
+                    } else {
                         this.$message.error(res.info)
                     }
                 })
             },
             // 分页导航
             handlePageChange(val) {
-                this.$set(this.query, 'pageIndex', val);
+                this.$set(this.query, 'pageNum', val);
                 this.getData();
             },
             getFields() {
@@ -501,7 +542,8 @@
         width: 40px;
         height: 40px;
     }
+
     .card {
-        word-wrap:break-word
+        word-wrap: break-word
     }
 </style>

@@ -44,6 +44,10 @@ public class JournalSummaryQueryResp {
 
     private String tagText;
 
+    private String createTimeText;
+
+    private String lastModifyTimeText;
+
     private List<JournalFieldContentResp> contents;
 
 }
