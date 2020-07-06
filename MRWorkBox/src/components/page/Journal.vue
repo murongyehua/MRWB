@@ -498,9 +498,6 @@
             },
             changeView() {
                 this.tableView = !this.tableView
-                if (!this.tableView) {
-                    this.$message.info('切换视图功能为试行版 并不稳定')
-                }
             },
             // 编辑操作
             handleEdit(index, row) {
