@@ -488,8 +488,6 @@
                             if (res.code === '0') {
                                 this.$message.success(res.info)
                                 this.getData()
-                            } else {
-                                this.$message.error(res.info)
                             }
                         })
                     })

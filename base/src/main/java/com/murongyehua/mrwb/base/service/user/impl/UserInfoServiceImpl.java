@@ -25,6 +25,7 @@ import com.murongyehua.mrwb.commom.user.UserContext;
 import com.murongyehua.mrwb.commom.user.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -62,8 +63,20 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultContext editUser(UserEditReq req) {
-        return null;
+        if (!req.getPassword().equals(req.getRePassword())) {
+            return ResultContext.businessFail("两次输入密码不一致");
+        }
+        BaseUserInfoPO userInfoPO = new BaseUserInfoPO();
+        userInfoPO.setId(req.getId());
+        userInfoPO.setNickname(req.getNickname());
+        userInfoPO.setPassword(DigestUtil.md5Hex(req.getPassword()));
+        int count = userInfoMapper.updateByPrimaryKeySelective(userInfoPO);
+        if (count != 1) {
+            return ResultContext.businessFail("修改失败");
+        }
+        return ResultContext.success("操作成功");
     }
 
     @Override

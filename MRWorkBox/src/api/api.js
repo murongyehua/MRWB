@@ -14,6 +14,9 @@ const user =  {
     },
     addUser (param) {
         return post(url + '/base/userInfo/add.smg', param)
+    },
+    editUser (param) {
+        return post(url + '/base/userInfo/edit.do', param)
     }
 }
 
