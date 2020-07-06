@@ -15,4 +15,6 @@ public class JournalFieldContentResp {
 
     private String content;
 
+    private Integer sortNum;
+
 }

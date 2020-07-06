@@ -14,10 +14,11 @@
         <result column="history_for_id" jdbcType="VARCHAR" property="historyForId"/>
         <result column="tag_id" jdbcType="VARCHAR" property="tagId"/>
         <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="last_modify_user" jdbcType="VARCHAR" property="lastModifyUser"/>
     </resultMap>
     <sql id="Base_Column_List">
         id, project_id, deal_user, deal_date, `state`, attach, last_modify_time, create_user,
-    create_time, history_for_id, tag_id, title
+    create_time, history_for_id, tag_id, title, last_modify_user
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
@@ -34,13 +35,13 @@
             parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO" useGeneratedKeys="true">
         insert into journal_summary (id, project_id, deal_user, deal_date,
                                      state, attach, last_modify_time,
-                                     create_user, create_time, history_for_id, tag_id, title)
+                                     create_user, create_time, history_for_id, tag_id, title, last_modify_user)
         values (#{id,jdbcType=VARCHAR}, #{projectId,jdbcType=VARCHAR}, #{dealUser,jdbcType=VARCHAR},
                 #{dealDate,jdbcType=VARCHAR},
                 #{state,jdbcType=CHAR}, #{attach,jdbcType=VARCHAR}, #{lastModifyTime,jdbcType=TIMESTAMP},
                 #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{historyForId,jdbcType=VARCHAR},
                 #{tagId,jdbcType=VARCHAR},
-                #{title,jdbcType=VARCHAR})
+                #{title,jdbcType=VARCHAR}, #{lastModifyUser,jdbcType=VARCHAR})
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id"
             parameterType="com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO" useGeneratedKeys="true">
@@ -79,6 +80,9 @@
             <if test="title != null">
                 title,
             </if>
+          <if test="lastModifyUser != null">
+              last_modify_user
+          </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="projectId != null">
@@ -113,6 +117,9 @@
             </if>
             <if test="title != null">
                 #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="lastModifyUser != null">
+                #{lastModifyUser,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -152,6 +159,9 @@
             <if test="title != null">
                 title = #{title,jdbcType=VARCHAR}
             </if>
+            <if test="lastModifyUser != null">
+                last_modify_user = #{lastModifyUser,jdbcType=VARCHAR}
+            </if>
         </set>
         where id = #{id,jdbcType=VARCHAR}
     </update>
@@ -176,6 +186,7 @@
             #{tagId,jdbcType=VARCHAR},
             title =
             #{title,jdbcType=VARCHAR}
+            last_modify_user = #{lastModifyUser,jdbcType=VARCHAR}
         where id = #{id,jdbcType=VARCHAR}
     </update>
     <select id="selectBySelective" resultMap="BaseResultMap">
@@ -218,6 +229,9 @@
             </if>
             <if test="title != null">
                 and title = #{title,jdbcType=VARCHAR}
+            </if>
+            <if test="lastModifyUser != null">
+                and last_modify_user = #{lastModifyUser,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

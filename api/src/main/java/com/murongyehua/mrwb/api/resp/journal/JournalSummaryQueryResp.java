@@ -48,6 +48,8 @@ public class JournalSummaryQueryResp {
 
     private String lastModifyTimeText;
 
+    private String lastModifyUserText;
+
     private List<JournalFieldContentResp> contents;
 
 }

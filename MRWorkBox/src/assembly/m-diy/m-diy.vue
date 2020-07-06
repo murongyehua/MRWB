@@ -17,7 +17,9 @@
             event: 'cc'
         },
         props: {
-            value: '',
+            value: {
+              default: ''
+            },
             type: {
                 type: String,
                 default: ''
@@ -41,6 +43,15 @@
         mounted() {
             if (this.content) {
                 this.finalContent = this.content.split(',')
+            }
+        },
+        watch: {
+            value() {
+                if (this.type === '3') {
+                    this.arrayData = this.value.split('`||@')
+                }else {
+                    this.data = this.value
+                }
             }
         },
         methods: {

@@ -37,7 +37,7 @@
                                     type="text"
                                     icon="el-icon-delete"
                                     class="red"
-                                    @click="handleDelete(scope.$index, scope.row)"
+                                    @click="showHistory(scope.$index, scope.row)"
                             >删除</el-button>
                         </template>
                     </el-table-column>
@@ -88,7 +88,7 @@
                                     type="text"
                                     icon="el-icon-delete"
                                     class="red"
-                                    @click="handleDelete(scope.$index, scope.row)"
+                                    @click="showHistory(scope.$index, scope.row)"
                             >删除</el-button>
                         </template>
                     </el-table-column>
@@ -140,7 +140,7 @@
                                     type="text"
                                     icon="el-icon-delete"
                                     class="red"
-                                    @click="handleDelete(scope.$index, scope.row)"
+                                    @click="showHistory(scope.$index, scope.row)"
                             >删除</el-button>
                         </template>
                     </el-table-column>
@@ -182,7 +182,7 @@
                                     type="text"
                                     icon="el-icon-delete"
                                     class="red"
-                                    @click="handleDelete(scope.$index, scope.row)"
+                                    @click="showHistory(scope.$index, scope.row)"
                             >删除</el-button>
                         </template>
                     </el-table-column>

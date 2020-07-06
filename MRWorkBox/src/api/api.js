@@ -62,6 +62,18 @@ const journal = {
     },
     queryJournalSummary (param) {
         return post(url + '/journal/summary/query.do', param)
+    },
+    getJournalSummaryById (param) {
+        return post(url + '/journal/summary/getById.do', param)
+    },
+    editJournalSummary (param) {
+        return jsonPost(url + '/journal/summary/edit.do', param)
+    },
+    queryJournalSummaryHistory (param) {
+        return post(url + '/journal/summary/queryHistory.do', param)
+    },
+    deleteJournalSummary (param) {
+        return jsonPost(url + '/journal/summary/delete.do', param)
     }
 }
 

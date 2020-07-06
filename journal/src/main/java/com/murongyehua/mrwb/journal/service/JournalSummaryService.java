@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface JournalSummaryService {
 
-    ResultContext addSummary(JournalSummaryReq addReq);
+    ResultContext addSummary(JournalSummaryReq addReq, boolean isCheckDup);
 
     PageView queryList(JournalSummaryParam param);
 

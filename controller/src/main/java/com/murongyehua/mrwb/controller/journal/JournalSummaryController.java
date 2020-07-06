@@ -24,7 +24,7 @@ public class JournalSummaryController {
 
     @PostMapping("/add.do")
     public ResultContext add(@RequestBody JournalSummaryReq addReq) {
-        return summaryService.addSummary(addReq);
+        return summaryService.addSummary(addReq, true);
     }
 
     @PostMapping("/query.do")

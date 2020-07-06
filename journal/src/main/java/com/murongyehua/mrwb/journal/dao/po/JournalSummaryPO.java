@@ -32,8 +32,18 @@ public class JournalSummaryPO implements Serializable {
 
     private String title;
 
+    private String lastModifyUser;
+
     public String getTitle() {
         return title;
+    }
+
+    public String getLastModifyUser() {
+        return lastModifyUser;
+    }
+
+    public void setLastModifyUser(String lastModifyUser) {
+        this.lastModifyUser = lastModifyUser;
     }
 
     public void setTitle(String title) {

@@ -62,19 +62,22 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultContext addSummary(JournalSummaryReq addReq) {
-        // 判重
-        JournalSummaryPO tempPo = new JournalSummaryPO();
-        tempPo.setTitle(addReq.getTitle());
-        List<JournalSummaryPO> tempList = summaryMapper.selectBySelective(tempPo);
-        if (CollectionUtil.isNotEmpty(tempList)) {
-            throw new MRBaseException("标题重复");
+    public ResultContext addSummary(JournalSummaryReq addReq, boolean isCheckDup) {
+        if (isCheckDup) {
+            // 判重
+            JournalSummaryPO tempPo = new JournalSummaryPO();
+            tempPo.setTitle(addReq.getTitle());
+            tempPo.setState(ENJournalState.ACTIVE.getValue());
+            List<JournalSummaryPO> tempList = summaryMapper.selectBySelective(tempPo);
+            if (CollectionUtil.isNotEmpty(tempList)) {
+                throw new MRBaseException("标题重复");
+            }
         }
         // 添加汇总表
         JournalSummaryPO journalSummaryPO = this.req2JournalSummaryPo(addReq);
         int summaryCount = summaryMapper.insert(journalSummaryPO);
         if (summaryCount != 1) {
-            throw new MRBaseException("新增失败");
+            throw new MRBaseException("操作失败");
         }
         // 添加字段内容表
             // 获取项目字段
@@ -103,7 +106,7 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
         PageInfo pageInfo = new PageInfo(summaryMapper.query(param));
         PageView pageView = new PageView();
         pageView.setCode(ENMsgCode.SUCCESS.getValue());
-        pageView.setRows(this.getRespList(pageInfo.getList()));
+        pageView.setRows(this.getRespList(pageInfo.getList(), false));
         pageView.setTotal(pageInfo.getTotal());
         return pageView;
     }
@@ -115,14 +118,14 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
             return ResultContext.businessFail("记录不存在");
         }
         ResultContext resultContext = ResultContext.success("操作成功");
-        resultContext.setData(this.getRespList(Collections.singletonList(summary)).get(0));
+        resultContext.setData(this.getRespList(Collections.singletonList(summary), true).get(0));
         return resultContext;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultContext editSummary(JournalSummaryReq editReq) {
-        ResultContext resultContext = this.addSummary(editReq);
+        ResultContext resultContext = this.addSummary(editReq, false);
         if (ENMsgCode.SUCCESS.getValue().equals(resultContext.getCode())) {
             // 把原本的记录改为历史版本
             JournalSummaryPO summary = new JournalSummaryPO();
@@ -130,6 +133,7 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
             summary.setState(ENJournalState.HISTORY.getValue());
             summary.setLastModifyTime(new Date());
             summary.setHistoryForId(resultContext.getData().toString());
+            summary.setLastModifyUser(UserContext.getUserId());
             int edit = summaryMapper.updateByPrimaryKeySelective(summary);
             if (edit != 1) {
                 throw new MRBaseException("修改失败");
@@ -143,11 +147,11 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
         JournalSummaryPO summaryPO = new JournalSummaryPO();
         summaryPO.setHistoryForId(summaryId);
         summaryPO.setState(ENJournalState.HISTORY.getValue());
-        PageHelper.startPage(1, 100, "last_modify_time");
+        PageHelper.startPage(1, 100, "last_modify_time desc");
         List<JournalSummaryPO> summarys = summaryMapper.selectBySelective(summaryPO);
         PageView pageView = new PageView();
         pageView.setCode(ENMsgCode.SUCCESS.getValue());
-        pageView.setRows(this.getRespList(summarys));
+        pageView.setRows(this.getRespList(summarys, false));
         pageView.setTotal((long) summarys.size());
         return pageView;
     }
@@ -166,7 +170,7 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
     }
 
 
-    private List<JournalSummaryQueryResp> getRespList(List<JournalSummaryPO> list) {
+    private List<JournalSummaryQueryResp> getRespList(List<JournalSummaryPO> list, boolean isEdit) {
         List<JournalSummaryQueryResp> summaryQueryResps = new ArrayList<>();
         list.forEach(x -> {
             JournalSummaryQueryResp summaryQueryResp = new JournalSummaryQueryResp();
@@ -175,11 +179,17 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
             List<JournalFieldContentResp> contentResps = new ArrayList<>();
             contents.forEach(y -> {
                 JournalFieldContentResp fieldContentResp = new JournalFieldContentResp();
-                fieldContentResp.setContent(y.getContent().replace(MRConstant.SPLIT_REG, StrUtil.COMMA));
+                if (!isEdit) {
+                    fieldContentResp.setContent(y.getContent().replace(MRConstant.SPLIT_REG, StrUtil.COMMA));
+                }else {
+                    fieldContentResp.setContent(y.getContent());
+                }
+                fieldContentResp.setSortNum(Integer.parseInt(fieldMapper.selectByPrimaryKey(y.getFieldId()).getSortnum()));
                 fieldContentResp.setFieldId(y.getFieldId());
                 contentResps.add(fieldContentResp);
             });
             summaryQueryResp.setCreateUserText(userInfoMapper.selectByPrimaryKey(x.getCreateUser()).getNickname());
+            summaryQueryResp.setLastModifyUserText(userInfoMapper.selectByPrimaryKey(x.getLastModifyUser()).getNickname());
             summaryQueryResp.setDealUserText(userInfoMapper.selectByPrimaryKey(x.getDealUser()).getNickname());
             summaryQueryResp.setTagText(tagMapper.selectByPrimaryKey(x.getTagId()).getTagname());
             summaryQueryResp.setCreateTimeText(DateUtil.format(x.getCreateTime(), DatePattern.NORM_DATETIME_PATTERN));
@@ -199,6 +209,7 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
         journalSummaryPO.setLastModifyTime(new Date());
         journalSummaryPO.setProjectId(UserContext.getProjectId());
         journalSummaryPO.setState(ENJournalState.ACTIVE.getValue());
+        journalSummaryPO.setLastModifyUser(UserContext.getUserId());
         return journalSummaryPO;
     }
 

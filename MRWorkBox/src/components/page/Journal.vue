@@ -11,7 +11,7 @@
             <div class="handle-box">
                 <el-drawer
                         :title="detail.title"
-                        :visible.sync="drawer">
+                        :visible.sync="detailDrawer">
                     <el-row>
                         <el-col :span="12">
                             <span><b>处理人: </b></span>{{detail.dealUserText}}
@@ -33,6 +33,11 @@
                             <span><b>最后修改时间: </b></span>{{detail.lastModifyTimeText}}
                         </el-col>
                         <el-col :span="12">
+                            <span><b>最后修改人: </b></span>{{detail.lastModifyUserText}}
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="12">
                             <span><b>分类: </b></span>{{detail.tagText}}
                         </el-col>
                     </el-row>
@@ -42,6 +47,25 @@
                     <el-row v-for="item in tableFields" class="card">
                         <span><b>{{item.fieldName + ': '}}</b></span>{{detail[item.fieldName]}}
                     </el-row>
+                </el-drawer>
+                <el-drawer
+                        title="历史版本"
+                        :visible.sync="historyDrawer"
+                        :with-header="false"
+                        direction="ttb">
+                    <el-table
+                            :data="historyTableData"
+                            height="250"
+                            border
+                            style="width: 100%">
+                        <el-table-column label="标题" prop="title" show-overflow-tooltip></el-table-column>
+                        <el-table-column v-for="item in tableFields" :prop="item.id" :label="item.fieldName"
+                                         align="left" show-overflow-tooltip></el-table-column>
+                        <el-table-column label="处理时间" prop="dealDate" show-overflow-tooltip></el-table-column>
+                        <el-table-column label="处理人" prop="dealUserText" show-overflow-tooltip></el-table-column>
+                        <el-table-column label="修改时间" prop="lastModifyTimeText" show-overflow-tooltip></el-table-column>
+                        <el-table-column label="修改人" prop="lastModifyUserText" show-overflow-tooltip></el-table-column>
+                    </el-table>
                 </el-drawer>
                 <el-form :inline="true">
                     <el-form-item label="处理时间">
@@ -139,8 +163,8 @@
                         </el-button>
                         <el-button
                                 type="text"
-                                icon="el-icon-delete"
-                                @click="handleDelete(scope.$index, scope.row)"
+                                icon="eel-icon-notebook-2"
+                                @click="showHistory(scope.$index, scope.row)"
                         >查看历史
                         </el-button>
                     </template>
@@ -159,9 +183,9 @@
                         </el-button>
                         <el-button
                                 type="text"
-                                icon="el-icon-delete"
+                                icon="el-icon-notebook-2"
                                 style="float: right; padding: 3px 0"
-                                @click="handleDelete(scope.$index, scope.row)"
+                                @click="showHistory(scope.$index, scope.row)"
                         >查看历史
                         </el-button>
                     </div>
@@ -185,23 +209,8 @@
         </div>
 
         <!-- 编辑记录弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px">
-                <el-form-item label="渠道名称">
-                    <el-input v-model="form.channelName"></el-input>
-                </el-form-item>
-                <el-form-item label="渠道编码">
-                    <el-input v-model="form.channelCode"></el-input>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
-            </span>
-        </el-dialog>
-        <!-- 新增记录弹出框 -->
-        <el-dialog title="新增记录" :visible.sync="addVisible" width="30%" center :close-on-click-modal="false"
-                   :destroy-on-close="true">
+        <el-dialog title="编辑记录" :visible.sync="editVisible" width="30%" center :close-on-click-modal="false"
+                   :destroy-on-close="true" @close="resetData">
             <el-form ref="form" :model="form" label-width="70px">
                 <el-form-item label="处理时间">
                     <el-date-picker
@@ -220,7 +229,7 @@
                 </el-form-item>
                 <el-form-item v-for="item in tableFields" :label="item.fieldName">
                     <m-diy :type="item.fieldType" :content="item.fieldContent" :id="item.id"
-                           v-model="data.fieldData[item.sortnum]"></m-diy>
+                           v-model="data.fieldData[item.sortnum]" :value="data.fieldData[item.sortnum]"></m-diy>
                 </el-form-item>
                 <el-form-item label="分类">
                     <el-select v-model="data.tag" value="" @visible-change="queryTags">
@@ -229,7 +238,40 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="saveAdd">确 定</el-button>
+                <el-button type="primary" @click="save('edit')">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 新增记录弹出框 -->
+        <el-dialog title="新增记录" :visible.sync="addVisible" width="30%" center :close-on-click-modal="false"
+                   :destroy-on-close="true" @close="resetData">
+            <el-form ref="form" :model="form" label-width="70px">
+                <el-form-item label="处理时间">
+                    <el-date-picker
+                            v-model="data.dealDate"
+                            type="date"
+                            placeholder="选择处理时间">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="处理人">
+                    <el-select v-model="data.dealUser" value="" @visible-change="queryUsers">
+                        <el-option v-for="item in users" :value="item.id" :label="item.nickname"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="标题">
+                    <el-input v-model="data.title"></el-input>
+                </el-form-item>
+                <el-form-item v-for="item in tableFields" :label="item.fieldName">
+                    <m-diy :type="item.fieldType" :content="item.fieldContent" :id="item.id"
+                           v-model="data.fieldData[item.sortnum]" :value="data.fieldData[item.sortnum]"></m-diy>
+                </el-form-item>
+                <el-form-item label="分类">
+                    <el-select v-model="data.tag" value="" @visible-change="queryTags">
+                        <el-option v-for="item in tags" :value="item.id" :label="item.tagname"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="save('add')">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 新增分类 -->
@@ -279,6 +321,7 @@
                 tags: [], // 可选分类
                 users: [], // 可选处理人
                 tableData: [],
+                historyTableData: [],
                 tableView: true,
                 tableFields: [],
                 multipleSelection: [],
@@ -286,7 +329,8 @@
                 editVisible: false,
                 addVisible: false,
                 addTagVisible: false,
-                drawer: false,
+                detailDrawer: false,
+                historyDrawer: false,
                 pageTotal: 0,
                 form: {},
                 idx: -1,
@@ -329,6 +373,7 @@
             this.queryUsers();
         },
         methods: {
+            // 获取表格数据
             getData() {
                 let param = {
                     dealDateStart: this.global.dateFormat('yyyy-MM-dd', this.query.dealDate[0]),
@@ -350,6 +395,26 @@
                                 this.$set(this.tableData[i], this.tableData[i].contents[j].fieldId, this.tableData[i].contents[j].content)
                             }
                         }
+                    }
+                })
+            },
+            // 获取单条记录
+            getById() {
+                this.API.getJournalSummaryById({summaryId: this.form.id}).then(res => {
+                    if (res.code === '0') {
+                        let contents = []
+                        res.data.contents.forEach(x => {
+                            contents[x.sortNum] = x.content
+                        })
+                        this.data = {
+                            dealDate: res.data.dealDate,
+                            dealUser: res.data.dealUser,
+                            fieldData: contents,
+                            tag: res.data.tagId,
+                            title: res.data.title
+                        }
+                    } else {
+                        this.$message.error(res.info)
                     }
                 })
             },
@@ -381,37 +446,55 @@
                 this.$set(this.query, 'pageNum', 1);
                 this.getData();
             },
-            // 删除操作
-            handleDelete(index, row) {
-                // 二次确认删除
-                this.$confirm('确定要删除吗？', '提示', {
-                    type: 'warning'
+            // 查看历史
+            showHistory(index, row) {
+                this.API.queryJournalSummaryHistory({summaryId: row.id}).then(res => {
+                    if (res.code === '0') {
+                        this.historyDrawer = true
+                        this.historyTableData = res.rows
+                        for (let i = 0; i < this.historyTableData.length; i++) {
+                            for (let j = 0; j < this.historyTableData[i].contents.length; j++) {
+                                this.$set(this.historyTableData[i], this.historyTableData[i].contents[j].fieldId, this.historyTableData[i].contents[j].content)
+                            }
+                        }
+                    }
                 })
-                    .then(() => {
-                        this.$message.success('删除成功');
-                        this.tableData.splice(index, 1);
-                    })
-                    .catch(() => {
-                    });
             },
             // 多选操作
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
             dbClick(val) {
-                console.info(val)
                 this.detail = val
-                this.drawer = true
+                this.detailDrawer = true
             },
             delAllSelection() {
-                const length = this.multipleSelection.length;
-                let str = '';
-                this.delList = this.delList.concat(this.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += this.multipleSelection[i].name + ' ';
+                if (this.multipleSelection.length === 0) {
+                    this.$message.warning('请选择所要删除的记录')
+                    return
                 }
-                this.$message.error(`删除了${str}`);
-                this.multipleSelection = [];
+                this.$confirm('确定要删除吗？', '提示', {
+                    type: 'warning'
+                })
+                    .then(() => {
+                        let ids = []
+                        for (let i = 0; i < this.multipleSelection.length; i++) {
+                            ids.push(this.multipleSelection[i].id)
+                        }
+                        let data = {
+                            ids: ids
+                        }
+                        this.API.deleteJournalSummary(data).then(res => {
+                            if (res.code === '0') {
+                                this.$message.success(res.info)
+                                this.getData()
+                            } else {
+                                this.$message.error(res.info)
+                            }
+                        })
+                    })
+                    .catch(() => {
+                    });
             },
             changeView() {
                 this.tableView = !this.tableView
@@ -423,16 +506,11 @@
             handleEdit(index, row) {
                 this.idx = index;
                 this.form = row;
+                this.getById()
                 this.editVisible = true;
             },
-            // 保存编辑
-            saveEdit() {
-                this.editVisible = false;
-                this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                this.$set(this.tableData, this.idx, this.form);
-            },
-            saveAdd() {
-                console.info(this.data)
+            // 保存记录
+            save(type) {
                 if (this.data.fieldData.length < this.tableFields.length) {
                     this.$message.warning('存在必填的未填项')
                     return
@@ -461,7 +539,6 @@
                 }
                 let fieldContents = this.data.fieldData
                 for (let i = 0; i < this.data.fieldData.length; i++) {
-                    console.info(Array.isArray(this.data.fieldData[i]))
                     if (Array.isArray(this.data.fieldData[i])) {
                         fieldContents[i] = this.data.fieldData[i].join('`||@')
                     }
@@ -473,13 +550,31 @@
                     title: this.data.title,
                     fieldContents: fieldContents
                 }
-                this.API.addJournalSummary(data).then(res => {
+                let method
+                if (type === 'add') {
+                    method = this.API.addJournalSummary
+                } else {
+                    method = this.API.editJournalSummary
+                    data.id = this.form.id
+                }
+                method(data).then(res => {
                     if (res.code === '0') {
                         this.$message.success(res.info)
                         this.addVisible = false
+                        this.editVisible = false
+                        this.resetData()
                         this.getData()
                     }
                 })
+            },
+            resetData() {
+                this.data = {
+                    dealDate: '',
+                    dealUser: '',
+                    fieldData: [],
+                    tag: '',
+                    title: ''
+                }
             },
             saveTag() {
                 if (!this.tagData.tagName || this.tagData.tagName.length === 0) {
