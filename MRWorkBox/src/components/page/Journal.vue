@@ -45,7 +45,7 @@
                     <hr>
                     <br>
                     <el-row v-for="item in tableFields" class="card">
-                        <span><b>{{item.fieldName + ': '}}</b></span>{{detail[item.fieldName]}}
+                        <span><b>{{item.fieldName + ': '}}</b></span>{{detail[item.id]}}
                     </el-row>
                 </el-drawer>
                 <el-drawer
@@ -466,6 +466,7 @@
             },
             dbClick(val) {
                 this.detail = val
+                console.info(this.detail)
                 this.detailDrawer = true
             },
             delAllSelection() {

@@ -153,6 +153,6 @@
   <select id="selectByProject" resultMap="BaseResultMap" parameterType="java.lang.String">
     select <include refid="Base_Column_List"/>
     from journal_field
-    where project_id = #{projectId,jdbcType=VARCHAR}
+    where project_id = #{projectId,jdbcType=VARCHAR} order by sortNum asc
   </select>
 </mapper>

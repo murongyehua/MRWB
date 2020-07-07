@@ -187,8 +187,12 @@
                 this.API.getProject().then(res => {
                     if (res.code === '0') {
                         this.projects = res.data
-                        this.checkedProject = res.data[0]
-                        bus.$emit('flushMenu', res.data[0].id)
+                        if (res.data) {
+                            this.checkedProject = res.data[0]
+                            bus.$emit('flushMenu', res.data[0].id)
+                        }else {
+                            bus.$emit('flushMenu', '')
+                        }
                     } else {
                         let msg = res.info + ',请返回登录'
                         this.$confirm(msg, '提示', {

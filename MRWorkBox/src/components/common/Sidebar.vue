@@ -71,10 +71,9 @@ export default {
             this.collapse = msg;
             bus.$emit('collapse-content', msg);
         });
-        let that = this
         bus.$on('flushMenu', projectId => {
             this.projectId = projectId
-            that.getMenu();
+            this.getMenu()
         });
     },
     mounted() {
