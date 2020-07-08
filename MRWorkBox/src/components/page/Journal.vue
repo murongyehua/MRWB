@@ -11,7 +11,7 @@
             <div class="handle-box">
                 <el-drawer
                         :title="detail.title"
-                        :visible.sync="detailDrawer">
+                        :visible.sync="detailDrawer" style="overflow: scroll">
                     <el-row>
                         <el-col :span="12">
                             <span><b>处理人: </b></span>{{detail.dealUserText}}
@@ -82,15 +82,15 @@
                         </el-date-picker>
                     </el-form-item>
                     <el-form-item label="处理人">
-                        <el-select size="mini" v-model="query.dealUser" value="">
+                        <el-select size="mini" v-model="query.dealUser" value="" clearable>
                             <el-option v-for="item in users" :value="item.id" :label="item.nickname"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="标题关键字">
-                        <el-input size="mini" v-model="query.titleLike"/>
+                        <el-input size="mini" v-model="query.titleLike" clearable/>
                     </el-form-item>
                     <el-form-item label="分类">
-                        <el-select size="mini" v-model="query.tag" value="">
+                        <el-select size="mini" v-model="query.tag" value="" clearable>
                             <el-option v-for="item in tags" :value="item.id" :label="item.tagname"></el-option>
                         </el-select>
                     </el-form-item>
@@ -151,6 +151,7 @@
                 <el-table-column label="标题" prop="title" show-overflow-tooltip></el-table-column>
                 <el-table-column v-for="item in tableFields" :prop="item.id" :label="item.fieldName"
                                  align="left" show-overflow-tooltip></el-table-column>
+                <el-table-column label="分类" prop="tagText" show-overflow-tooltip></el-table-column>
                 <el-table-column label="处理时间" prop="dealDate" show-overflow-tooltip></el-table-column>
                 <el-table-column label="处理人" prop="dealUserText" show-overflow-tooltip></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
@@ -174,24 +175,25 @@
                 <el-card class="box-card" v-if="!tableView" v-for="item in tableData" :key="item.id">
                     <div slot="header" class="clearfix">
                         <span class="card">{{item.title}}</span>
-                        <el-button
-                                type="text"
-                                icon="el-icon-edit"
-                                style="float: right; padding: 3px 0"
-                                @click="handleEdit(scope.$index, scope.row)"
-                        >编辑
-                        </el-button>
-                        <el-button
-                                type="text"
-                                icon="el-icon-notebook-2"
-                                style="float: right; padding: 3px 0"
-                                @click="showHistory(scope.$index, scope.row)"
-                        >查看历史
-                        </el-button>
+                        <!--<el-button-->
+                                <!--type="text"-->
+                                <!--icon="el-icon-edit"-->
+                                <!--style="float: right; padding: 3px 0"-->
+                                <!--@click="handleEdit(scope.$index, scope.row)"-->
+                        <!--&gt;编辑-->
+                        <!--</el-button>-->
+                        <!--<el-button-->
+                                <!--type="text"-->
+                                <!--icon="el-icon-notebook-2"-->
+                                <!--style="float: right; padding: 3px 0"-->
+                                <!--@click="showHistory(scope.$index, scope.row)"-->
+                        <!--&gt;查看历史-->
+                        <!--</el-button>-->
                     </div>
                     <div v-for="o in tableFields" :key="o.id" class="text item card">
                         <b>{{o.fieldName + ': '}}</b>{{item[o.id]}}
                     </div>
+                    <div class="text item card"><b>分类：</b>{{item.tagText}}</div>
                     <div class="text item card"><b>处理时间：</b>{{item.title}}</div>
                     <div class="text item card"><b>处理人：</b>{{item.dealUserText}}</div>
                 </el-card>
@@ -436,6 +438,8 @@
             },
             // 显示新增记录的弹框
             addJournal() {
+                this.data.dealUser = JSON.parse(localStorage.getItem('ms_username')).id
+                this.data.dealDate = new Date()
                 this.addVisible = true
             },
             addTag() {
@@ -466,7 +470,6 @@
             },
             dbClick(val) {
                 this.detail = val
-                console.info(this.detail)
                 this.detailDrawer = true
             },
             delAllSelection() {
@@ -600,13 +603,17 @@
     };
 </script>
 
-<style scoped>
+<style>
     .handle-box {
         margin-bottom: 20px;
     }
 
     .handle-select {
         width: 120px;
+    }
+
+    .el-drawer.rtl{
+        overflow: auto;
     }
 
     .handle-input {

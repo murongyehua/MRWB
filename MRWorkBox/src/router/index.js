@@ -52,6 +52,11 @@ export default new Router({
             meta: { title: '登录' }
         },
         {
+            path: '/updateLog',
+            component: () => import(/* webpackChunkName: "table" */ '../components/common/updateLog.vue'),
+            meta: { title: '更新日志' }
+        },
+        {
             path: '*',
             redirect: '/404'
         }

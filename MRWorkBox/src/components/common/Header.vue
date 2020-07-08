@@ -17,6 +17,11 @@
                         <i class="el-icon-rank"></i>
                     </el-tooltip>
                 </div>
+                <div class="btn-bell" @click="showUpdateLog">
+                    <el-tooltip effect="dark" :content="'更新日志'" placement="bottom">
+                        <el-link :to="{path: ''}" type="primary" icon="el-icon-ship" :underline="false"></el-link>
+                    </el-tooltip>
+                </div>
                 <!-- 消息中心 -->
                 <!--<div class="btn-bell">-->
                 <!--<el-tooltip-->
@@ -108,6 +113,11 @@
                     let userInfo = JSON.parse(localStorage.getItem('ms_username'));
                     this.userInfo.nickname = userInfo.nickname
                 }
+            },
+            // 查看更新日志
+            showUpdateLog() {
+                let routeData = this.$router.resolve({ path: '/updateLog'});
+                window.open(routeData.href, '_blank');
             },
             // 关闭资料修改
             handleClose() {

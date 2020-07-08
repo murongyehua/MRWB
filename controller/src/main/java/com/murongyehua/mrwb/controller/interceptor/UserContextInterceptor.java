@@ -45,14 +45,14 @@ public class UserContextInterceptor extends HandlerInterceptorAdapter {
             // 未登录时只有.pub放行，其他全部拦截
             if (!servletPath.contains(INTERCEPTOR_OPER)) {
                 response.setContentType("application/json");
-                response.getWriter().write(getErrorReturn(NOT_LOG_IN_MESSAGE).toJSONString());
+                response.getWriter().write(getErrorReturn(NOT_LOG_IN_MESSAGE, "3").toJSONString());
                 return false;
             }
         } else {
             // .smg只有系统管理员放行
             if (servletPath.contains(SYSTEM_MANAGER_OPER) && !ENUserType.MANAGER.getValue().equals(userInfo.getUserType())) {
                 response.setContentType("application/json");
-                response.getWriter().write(getErrorReturn(NOT_RIGHT_MESSAGE).toJSONString());
+                response.getWriter().write(getErrorReturn(NOT_RIGHT_MESSAGE, "2").toJSONString());
                 return false;
             }
             UserContext.setUserInfo(userInfo);
@@ -60,9 +60,9 @@ public class UserContextInterceptor extends HandlerInterceptorAdapter {
         return true;
     }
 
-    private JSONObject getErrorReturn(String message) {
+    private JSONObject getErrorReturn(String message, String code) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code", "2");
+        jsonObject.put("code", code);
         jsonObject.put("success", false);
         jsonObject.put("info", message);
         return jsonObject;
