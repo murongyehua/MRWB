@@ -2,6 +2,15 @@
     <div style="margin-left: 30%; width: 40%; margin-top: 100px">
         <div class="block">
             <el-timeline>
+                <el-timeline-item timestamp="2020/7/13" placement="top" color="#0bbd87">
+                    <el-card>
+                        <h4>版本1.0.2发布</h4>
+                        <p>修复：</p>
+                        <p>1.值班日志列表切换视图后处理时间显示错误的问题</p>
+                        <p>2.修改资料弹出框关闭按钮点击后不生效的问题</p>
+                        <p>3.其他已知问题</p>
+                    </el-card>
+                </el-timeline-item>
                 <el-timeline-item timestamp="2020/7/8" placement="top" color="#0bbd87">
                     <el-card>
                         <h4>版本1.0.1发布</h4>
