@@ -194,7 +194,7 @@
                         <b>{{o.fieldName + ': '}}</b>{{item[o.id]}}
                     </div>
                     <div class="text item card"><b>分类：</b>{{item.tagText}}</div>
-                    <div class="text item card"><b>处理时间：</b>{{item.title}}</div>
+                    <div class="text item card"><b>处理时间：</b>{{item.dealDate}}</div>
                     <div class="text item card"><b>处理人：</b>{{item.dealUserText}}</div>
                 </el-card>
             </el-row>
