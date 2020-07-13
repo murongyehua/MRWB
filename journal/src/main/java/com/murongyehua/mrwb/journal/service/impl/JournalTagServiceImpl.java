@@ -2,6 +2,7 @@ package com.murongyehua.mrwb.journal.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.IdUtil;
+import com.murongyehua.mrwb.api.req.journal.JournalTagReq;
 import com.murongyehua.mrwb.commom.PageView;
 import com.murongyehua.mrwb.commom.ResultContext;
 import com.murongyehua.mrwb.commom.enums.ENMsgCode;
@@ -55,5 +56,17 @@ public class JournalTagServiceImpl implements JournalTagService {
         pageView.setRows(journalTagPOS);
         pageView.setCode(ENMsgCode.SUCCESS.getValue());
         return pageView;
+    }
+
+    @Override
+    public ResultContext editTag(JournalTagReq req) {
+        JournalTagPO tagPO = new JournalTagPO();
+        tagPO.setId(req.getId());
+        tagPO.setTagname(req.getName());
+        int count = journalTagMapper.updateByPrimaryKeySelective(tagPO);
+        if (count != 1) {
+            return ResultContext.businessFail("操作失败");
+        }
+        return ResultContext.success("操作成功");
     }
 }

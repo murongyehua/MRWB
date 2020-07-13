@@ -1,5 +1,6 @@
 package com.murongyehua.mrwb.controller.journal;
 
+import com.murongyehua.mrwb.api.req.journal.JournalTagReq;
 import com.murongyehua.mrwb.commom.PageView;
 import com.murongyehua.mrwb.commom.ResultContext;
 import com.murongyehua.mrwb.journal.service.JournalTagService;
@@ -27,6 +28,11 @@ public class JournalTagController {
     @PostMapping("/query.do")
     public PageView queryList() {
         return journalTagService.queryTag();
+    }
+
+    @PostMapping("/edit.do")
+    public ResultContext editTag(JournalTagReq req){
+        return journalTagService.editTag(req);
     }
 
 }

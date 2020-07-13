@@ -82,7 +82,7 @@
                         </el-date-picker>
                     </el-form-item>
                     <el-form-item label="处理人">
-                        <el-select size="mini" v-model="query.dealUser" value="" clearable>
+                        <el-select size="mini" v-model="query.dealUser" value="" clearable filterable>
                             <el-option v-for="item in users" :value="item.id" :label="item.nickname"></el-option>
                         </el-select>
                     </el-form-item>
@@ -90,7 +90,7 @@
                         <el-input size="mini" v-model="query.titleLike" clearable/>
                     </el-form-item>
                     <el-form-item label="分类">
-                        <el-select size="mini" v-model="query.tag" value="" clearable>
+                        <el-select size="mini" v-model="query.tag" value="" clearable filterable>
                             <el-option v-for="item in tags" :value="item.id" :label="item.tagname"></el-option>
                         </el-select>
                     </el-form-item>
@@ -126,7 +126,16 @@
                 <el-button size="mini" style="margin-bottom: 5px;" @click="addTag">新增</el-button>
                 <el-table :data="tags">
                     <el-table-column width="150" property="tagname" label="名称"></el-table-column>
-                    <el-table-column width="250" property="" label="操作">暂不支持</el-table-column>
+                    <el-table-column width="250" property="" label="操作">
+                        <template slot-scope="scope">
+                            <el-button
+                                    type="text"
+                                    icon="el-icon-edit"
+                                    @click="tagEdit(scope.$index, scope.row)"
+                            >编辑
+                            </el-button>
+                        </template>
+                    </el-table-column>
                 </el-table>
                 <el-button
                         slot="reference"
@@ -222,7 +231,7 @@
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="处理人">
-                    <el-select v-model="data.dealUser" value="" @visible-change="queryUsers">
+                    <el-select v-model="data.dealUser" value="" @visible-change="queryUsers" filterable>
                         <el-option v-for="item in users" :value="item.id" :label="item.nickname"></el-option>
                     </el-select>
                 </el-form-item>
@@ -234,7 +243,7 @@
                            v-model="data.fieldData[item.sortnum]" :value="data.fieldData[item.sortnum]"></m-diy>
                 </el-form-item>
                 <el-form-item label="分类">
-                    <el-select v-model="data.tag" value="" @visible-change="queryTags">
+                    <el-select v-model="data.tag" value="" @visible-change="queryTags" filterable>
                         <el-option v-for="item in tags" :value="item.id" :label="item.tagname"></el-option>
                     </el-select>
                 </el-form-item>
@@ -255,7 +264,7 @@
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="处理人">
-                    <el-select v-model="data.dealUser" value="" @visible-change="queryUsers">
+                    <el-select v-model="data.dealUser" value="" @visible-change="queryUsers" filterable>
                         <el-option v-for="item in users" :value="item.id" :label="item.nickname"></el-option>
                     </el-select>
                 </el-form-item>
@@ -267,7 +276,7 @@
                            v-model="data.fieldData[item.sortnum]" :value="data.fieldData[item.sortnum]"></m-diy>
                 </el-form-item>
                 <el-form-item label="分类">
-                    <el-select v-model="data.tag" value="" @visible-change="queryTags">
+                    <el-select v-model="data.tag" value="" @visible-change="queryTags" filterable>
                         <el-option v-for="item in tags" :value="item.id" :label="item.tagname"></el-option>
                     </el-select>
                 </el-form-item>
@@ -276,11 +285,11 @@
                 <el-button type="primary" @click="save('add')">确 定</el-button>
             </span>
         </el-dialog>
-        <!-- 新增分类 -->
-        <el-dialog title="新增分类" :visible.sync="addTagVisible" width="30%" :close-on-click-modal="false"
+        <!-- 新增/编辑分类 -->
+        <el-dialog :title="tagShowTitle" :visible.sync="addTagVisible" width="30%" :close-on-click-modal="false"
                    :destroy-on-close="true">
             <el-form ref="form" :model="form" label-width="70px">
-                <el-form-item label="分类名称">
+                    <el-form-item label="分类名称">
                     <el-input v-model="tagData.tagName"></el-input>
                 </el-form-item>
             </el-form>
@@ -318,7 +327,8 @@
                 },
                 detail: {},
                 tagData: {
-                    tagName: ''
+                    tagName: '',
+                    id: ''
                 },
                 tags: [], // 可选分类
                 users: [], // 可选处理人
@@ -331,6 +341,8 @@
                 editVisible: false,
                 addVisible: false,
                 addTagVisible: false,
+                tagShowTitle: '新增分类',
+                tagType: '0',
                 detailDrawer: false,
                 historyDrawer: false,
                 pageTotal: 0,
@@ -508,6 +520,12 @@
                 this.getById()
                 this.editVisible = true;
             },
+            tagEdit(index, row) {
+                this.tagData.tagName = row.tagname
+                this.tagData.id = row.id
+                this.tagType = '1'
+                this.addTag()
+            },
             // 保存记录
             save(type) {
                 if (this.data.fieldData.length < this.tableFields.length) {
@@ -580,14 +598,30 @@
                     this.$message.warning('请填写分类名称')
                     return
                 }
-                this.API.addJournalTag({name: this.tagData.tagName}).then(res => {
-                    if (res.code === '0') {
-                        this.$message.success(res.info)
-                        this.addTagVisible = false
-                    } else {
-                        this.$message.error(res.info)
-                    }
-                })
+                if (this.tagType === '0') {
+                    this.API.addJournalTag({name: this.tagData.tagName}).then(res => {
+                        if (res.code === '0') {
+                            this.$message.success(res.info)
+                            this.addTagVisible = false
+                        } else {
+                            this.$message.error(res.info)
+                        }
+                    })
+                } else {
+                    this.API.editJournalTag({name: this.tagData.tagName, id:this.tagData.id}).then(res => {
+                        if (res.code === '0') {
+                            this.$message.success(res.info)
+                            this.addTagVisible = false
+                        } else {
+                            this.$message.error(res.info)
+                        }
+                    })
+                }
+                this.tagType = '0'
+                this.tagData = {
+                    tagName: '',
+                    id: ''
+                }
             },
             // 分页导航
             handlePageChange(val) {

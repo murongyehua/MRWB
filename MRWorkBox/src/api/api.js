@@ -60,6 +60,9 @@ const journal = {
     queryJournalTag (param) {
         return post(url + '/journal/tag/query.do', param)
     },
+    editJournalTag (param) {
+        return post(url + '/journal/tag/edit.do', param)
+    },
     addJournalSummary (param) {
         return jsonPost(url + '/journal/summary/add.do', param)
     },

@@ -2,6 +2,15 @@
     <div style="margin-left: 30%; width: 40%; margin-top: 100px">
         <div class="block">
             <el-timeline>
+                <el-timeline-item timestamp="2020/7/14" placement="top" color="#0bbd87">
+                    <el-card>
+                        <h4>版本1.0.3发布</h4>
+                        <p>优化：</p>
+                        <p>1.值班日志页面所有下拉框支持模糊搜索</p>
+                        <p>新增：</p>
+                        <p>1.分类名称可以进行修改了</p>
+                    </el-card>
+                </el-timeline-item>
                 <el-timeline-item timestamp="2020/7/13" placement="top" color="#0bbd87">
                     <el-card>
                         <h4>版本1.0.2发布</h4>
