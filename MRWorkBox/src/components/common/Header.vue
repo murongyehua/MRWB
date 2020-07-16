@@ -221,7 +221,7 @@
                             bus.$emit('flushMenu', '')
                         }
                     } else {
-                        let msg = res.info + ',请返回登录'
+                        let msg = res.info + '，即将返回登录'
                         this.$confirm(msg, '提示', {
                             confirmButtonText: '确定',
                             type: 'warning'

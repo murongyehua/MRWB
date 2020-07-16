@@ -4,7 +4,9 @@
         <el-row :gutter="5">
             <el-col :span="12">
                 <div>
+                    <span>用户管理</span>
                     <el-button size="mini" @click="showAddUserModal">新增</el-button>
+                    <el-button size="mini">分配权限</el-button>
                 </div>
                 <el-table
                         :data="userTableData"
@@ -13,6 +15,7 @@
                         ref="userTable"
                         header-cell-class-name="table-header"
                         @selection-change="handleSelectionChange"
+                        style="overflow: scroll"
                 >
                     <el-table-column type="selection" width="55" align="center"></el-table-column>
                     <el-table-column prop="index" label="ID" width="55" align="center"></el-table-column>
@@ -56,7 +59,9 @@
             </el-col>
             <el-col :span="12">
                 <div>
+                    <span>项目管理</span>
                     <el-button size="mini">新增</el-button>
+                    <el-button size="mini">开通模块</el-button>
                 </div>
                 <el-table
                         :data="projectTableData"
@@ -65,6 +70,7 @@
                         ref="projectTable"
                         header-cell-class-name="table-header"
                         @selection-change="handleSelectionChange"
+                        style="overflow: scroll"
                 >
                     <el-table-column type="selection" width="55" align="center"></el-table-column>
                     <el-table-column prop="index" label="ID" width="55" align="center"></el-table-column>
@@ -108,7 +114,9 @@
         <el-row :gutter="5">
             <el-col :span="12">
                 <div>
+                    <span>模块管理</span>
                     <el-button size="mini">新增</el-button>
+                    <el-button size="mini">绑定菜单</el-button>
                 </div>
                 <el-table
                         :data="modalTableData"
@@ -117,6 +125,7 @@
                         ref="modalTable"
                         header-cell-class-name="table-header"
                         @selection-change="handleSelectionChange"
+                        style="overflow: scroll"
                 >
                     <el-table-column type="selection" width="55" align="center"></el-table-column>
                     <el-table-column prop="index" label="ID" width="55" align="center"></el-table-column>
@@ -158,6 +167,7 @@
             </el-col>
             <el-col :span="12">
                 <div>
+                    <span>菜单管理</span>
                     <el-button size="mini">新增</el-button>
                 </div>
                 <el-table
@@ -167,6 +177,7 @@
                         ref="menuTable"
                         header-cell-class-name="table-header"
                         @selection-change="handleSelectionChange"
+                        style="overflow: scroll"
                 >
                     <el-table-column type="selection" width="55" align="center"></el-table-column>
                     <el-table-column prop="index" label="ID" width="55" align="center"></el-table-column>
@@ -230,7 +241,7 @@
                 userLoading: true,
                 userSearchData: {
                     pageNum: 1,
-                    pageSize: 20,
+                    pageSize: 10,
                     sortName: '',
                     sortType: ''
                 },
@@ -349,8 +360,17 @@
             addUser () {
                 this.showUserAdd = false
                 this.API.addUser(this.userAdd).then(res =>{
-                    this.$message.info(res.info)
+                    if (res.code === '0') {
+                        this.$message.info(res.info)
+                        this.queryUser()
+                    }
                 })
+                this.userAdd = {
+                        username: '',
+                        password: '',
+                        nickname: '',
+                        userType: '0'
+                }
             }
         }
     }
