@@ -2,7 +2,7 @@
     <div style="margin-left: 30%; width: 40%; margin-top: 100px">
         <div class="block">
             <el-timeline>
-                <el-timeline-item timestamp="2020/7/24" placement="top" color="#0bbd87">
+                <el-timeline-item timestamp="2020/7/31" placement="top" color="#0bbd87">
                     <el-card>
                         <h4>版本1.1.0发布</h4>
                         <p>新增：</p>
