@@ -2,7 +2,18 @@
     <div style="margin-left: 30%; width: 40%; margin-top: 100px">
         <div class="block">
             <el-timeline>
-                <el-timeline-item timestamp="2020/7/14" placement="top" color="#0bbd87">
+                <el-timeline-item timestamp="2020/7/31" placement="top" color="#0bbd87">
+                    <el-card>
+                        <h4>版本1.1.0发布</h4>
+                        <p>新增：</p>
+                        <p>1.管理员操作界面化，可在页面上对用户、项目、模块、菜单进行基本管理</p>
+                        <p>2.值班日志页面搜索条件增加高级查询</p>
+                        <p>优化：</p>
+                        <p>1.页面超时体验优化</p>
+                        <p>2.值班日志页面输入内容保留换行格式</p>
+                    </el-card>
+                </el-timeline-item>
+                <el-timeline-item timestamp="2020/7/16" placement="top" color="#0bbd87">
                     <el-card>
                         <h4>版本1.0.3发布</h4>
                         <p>优化：</p>
