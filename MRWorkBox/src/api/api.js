@@ -17,6 +17,9 @@ const user =  {
     },
     editUser (param) {
         return post(url + '/base/userInfo/edit.do', param)
+    },
+    resetPassword (param) {
+        return post(url + '/base/userInfo/resetPassword.smg', param)
     }
 }
 
@@ -29,6 +32,9 @@ const right = {
     },
     getUsers (param) {
         return post(url + '/base/userRight/getUsers.do', param)
+    },
+    addUserRight (param) {
+        return post(url + '/base/userRight/addUserRight.smg', param)
     }
 }
 
@@ -41,6 +47,9 @@ const project = {
 const modal = {
     queryModalList (param) {
         return post(url + '/base/modal/query.smg', param)
+    },
+    getModalsByProject (param){
+        return post(url + '/base/modal/getModalsByProject.smg', param)
     }
 }
 

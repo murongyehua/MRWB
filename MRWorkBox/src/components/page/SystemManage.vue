@@ -36,14 +36,8 @@
                             <el-button
                                     type="text"
                                     icon="el-icon-edit"
-                                    @click="handleEdit(scope.$index, scope.row)"
-                            >编辑</el-button>
-                            <el-button
-                                    type="text"
-                                    icon="el-icon-delete"
-                                    class="red"
-                                    @click="showHistory(scope.$index, scope.row)"
-                            >删除</el-button>
+                                    @click="resetPassword(scope.$index, scope.row)"
+                            >重置密码</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -234,19 +228,19 @@
         <el-dialog title="分配权限" :visible.sync="showUserRightDistribute">
             <el-form :model="userRightDistribute">
                 <el-form-item label="项目" :label-width="formLabelWidth">
-                    <el-select v-model="userRightDistribute.projectId" value="" placeholder="请选择" @change="projectChange">
+                    <el-select v-model="userRightDistribute.projectId" value="" placeholder="请选择" @visible-change="projectChange">
                         <el-option v-for=" item in projectTableData" :value="item.id" :label="item.name"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="模块" :label-width="formLabelWidth">
                     <el-select v-model="userRightDistribute.modalIds" value="" multiple placeholder="请选择">
-                        <el-option v-for="item in projectTableData" :value="item.id" :label="item.name"></el-option>
+                        <el-option v-for="item in modalInProjects" :value="item.id" :label="item.name"></el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="showUserAdd = false">取 消</el-button>
-                <el-button type="primary" @click="addUser">确 定</el-button>
+                <el-button @click="showUserRightDistribute = false">取 消</el-button>
+                <el-button type="primary" @click="addUserRight">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -310,7 +304,8 @@
                     userId: '',
                     projectId: '',
                     modalIds: [],
-                }
+                },
+                modalInProjects: []
             }
         },
         mounted() {
@@ -384,10 +379,53 @@
                     this.$message.warning('请选择一个用户进行操作')
                     return
                 }
+                this.userRightDistribute.userId = this.userSelection[0].id
+                this.userRightDistribute.projectId = this.projectTableData.length > 0 ? this.projectTableData[0].id : ''
                 this.showUserRightDistribute = !this.showUserRightDistribute
+                this.projectChange()
             },
             projectChange () {
-
+                this.userRightDistribute.modalIds = []
+                let param = {
+                    projectId: this.userRightDistribute.projectId,
+                    userId: this.userRightDistribute.userId
+                }
+                this.API.getModalsByProject(param).then(res => {
+                    if (res.code === '0') {
+                        this.modalInProjects = res.data.modalInfos
+                        this.userRightDistribute.modalIds = res.data.distributedModalIds
+                    }
+                })
+            },
+            addUserRight () {
+                if (!this.userRightDistribute.projectId || this.userRightDistribute.projectId.length === 0) {
+                    this.$message.warning('项目不能为空')
+                    return
+                }
+                this.API.addUserRight(this.userRightDistribute).then(res => {
+                    if (res.code === '0') {
+                        this.$message.success(res.info)
+                        this.userRightDistribute = {
+                            projectId: '',
+                            modalIds: '',
+                            userId: ''
+                        }
+                        this.showUserRightDistribute = !this.showUserRightDistribute
+                    }
+                })
+            },
+            resetPassword (index, row) {
+                this.$confirm('确认要重置用户【' + row.nickname + '】的密码？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.API.resetPassword({userId: row.id}).then(res => {
+                        if (res.code === '0') {
+                            this.$message.success(res.info)
+                        }
+                    })
+                })
             },
             handleUserPageChange(val) {
                 this.handlePageChange(val, 'user')

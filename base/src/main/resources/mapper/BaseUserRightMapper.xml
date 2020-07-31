@@ -130,4 +130,7 @@
       </if>
     </where>
   </select>
+  <delete id="deleteByProjectIdAndUserId">
+    delete from base_user_right where project_id = #{projectId} and user_id = #{userId}
+  </delete>
 </mapper>

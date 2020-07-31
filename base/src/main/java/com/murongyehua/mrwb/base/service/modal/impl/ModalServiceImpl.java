@@ -7,6 +7,7 @@ import cn.hutool.core.date.DateUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.murongyehua.mrwb.api.param.ModalParam;
+import com.murongyehua.mrwb.api.req.ModalInProjectReq;
 import com.murongyehua.mrwb.api.resp.ModalListResp;
 import com.murongyehua.mrwb.api.resp.ProjectListResp;
 import com.murongyehua.mrwb.base.dao.mapper.BaseModalInProjectMapper;
@@ -58,15 +59,18 @@ public class ModalServiceImpl implements ModalService {
     }
 
     @Override
-    public ResultContext getModalsByPorject(String projectId, String userId) {
+    public ResultContext getModalsByPorject(ModalInProjectReq req) {
         BaseModalInProjectPO modalInProject = new BaseModalInProjectPO();
-        modalInProject.setProjectId(projectId);
+        modalInProject.setProjectId(req.getProjectId());
         List<BaseModalInProjectPO> modalInProjects = modalInProjectMapper.selectBySelective(modalInProject);
+        if (CollectionUtil.isEmpty(modalInProjects)) {
+            return ResultContext.businessFail("此项目还未开通模块");
+        }
         List<String> modalIds = modalInProjects.stream().map(BaseModalInProjectPO::getModalId).collect(Collectors.toList());
         List<BaseModalInfoPO> modalInfos = modalInfoMapper.selectByIds(modalIds);
         BaseUserRightPO param = new BaseUserRightPO();
-        param.setProjectId(projectId);
-        param.setUserId(userId);
+        param.setProjectId(req.getProjectId());
+        param.setUserId(req.getUserId());
         List<BaseUserRightPO> userRights = userRightMapper.selectBySelective(param);
         ModalInProjectResp modalInProjectResp = new ModalInProjectResp();
         modalInProjectResp.setModalInfos(modalInfos);

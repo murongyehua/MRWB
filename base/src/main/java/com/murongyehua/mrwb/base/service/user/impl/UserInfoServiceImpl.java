@@ -116,6 +116,17 @@ public class UserInfoServiceImpl implements UserInfoService {
         return pageView;
     }
 
+    @Override
+    public ResultContext resetPassword(String userId) {
+        BaseUserInfoPO userInfo = userInfoMapper.selectByPrimaryKey(userId);
+        if (userInfo == null) {
+            return ResultContext.businessFail("用户不存在");
+        }
+        userInfo.setPassword(DigestUtil.md5Hex(userInfo.getUsername() + "123"));
+        userInfoMapper.updateByPrimaryKey(userInfo);
+        return ResultContext.success("操作成功");
+    }
+
     private List<UserListResp> translate(List<BaseUserInfoPO> list) {
         List<UserListResp> result = new ArrayList<>();
         int num = 1;

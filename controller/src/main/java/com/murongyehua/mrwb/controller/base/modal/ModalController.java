@@ -1,6 +1,7 @@
 package com.murongyehua.mrwb.controller.base.modal;
 
 import com.murongyehua.mrwb.api.param.ModalParam;
+import com.murongyehua.mrwb.api.req.ModalInProjectReq;
 import com.murongyehua.mrwb.base.service.modal.ModalService;
 import com.murongyehua.mrwb.commom.PageView;
 import com.murongyehua.mrwb.commom.ResultContext;
@@ -25,9 +26,9 @@ public class ModalController {
         return modalService.queryList(param);
     }
 
-    @PostMapping("/getModalsByProject")
-    public ResultContext getModalsByProject(String projectId, String userId) {
-        return modalService.getModalsByPorject(projectId, userId);
+    @PostMapping("/getModalsByProject.smg")
+    public ResultContext getModalsByProject(ModalInProjectReq req) {
+        return modalService.getModalsByPorject(req);
     }
 
 }

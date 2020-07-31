@@ -44,4 +44,9 @@ public class UserInfoController {
     public ResultContext editUser(UserEditReq req) {
         return userInfoService.editUser(req);
     }
+
+    @PostMapping("/resetPassword.smg")
+    public ResultContext resetPassword(String userId) {
+        return userInfoService.resetPassword(userId);
+    }
 }

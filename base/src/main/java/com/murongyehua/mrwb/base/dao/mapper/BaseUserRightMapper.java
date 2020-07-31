@@ -23,4 +23,6 @@ public interface BaseUserRightMapper {
     List<String> distinctUserId(@Param("projectId") String projectId);
 
     List<BaseUserRightPO> selectBySelective(BaseUserRightPO record);
+
+    int deleteByProjectIdAndUserId(BaseUserRightPO record);
 }
