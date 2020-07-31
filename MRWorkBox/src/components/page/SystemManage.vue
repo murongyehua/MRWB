@@ -35,7 +35,7 @@
                         <template slot-scope="scope">
                             <el-button
                                     type="text"
-                                    icon="el-icon-edit"
+                                    icon="el-icon-refresh-right"
                                     @click="resetPassword(scope.$index, scope.row)"
                             >重置密码</el-button>
                         </template>
