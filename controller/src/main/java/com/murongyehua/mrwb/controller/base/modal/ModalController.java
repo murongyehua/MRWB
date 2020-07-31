@@ -3,6 +3,7 @@ package com.murongyehua.mrwb.controller.base.modal;
 import com.murongyehua.mrwb.api.param.ModalParam;
 import com.murongyehua.mrwb.base.service.modal.ModalService;
 import com.murongyehua.mrwb.commom.PageView;
+import com.murongyehua.mrwb.commom.ResultContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,11 @@ public class ModalController {
     @PostMapping("/query.smg")
     public PageView query(ModalParam param) {
         return modalService.queryList(param);
+    }
+
+    @PostMapping("/getModalsByProject")
+    public ResultContext getModalsByProject(String projectId, String userId) {
+        return modalService.getModalsByPorject(projectId, userId);
     }
 
 }

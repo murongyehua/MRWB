@@ -1,12 +1,13 @@
 <template>
     <div>
     <div ref="tableWrap">
+        <el-button size="mini" type="primary" @click="flushData">刷新数据</el-button>
         <el-row :gutter="5">
             <el-col :span="12">
                 <div>
                     <span>用户管理</span>
                     <el-button size="mini" @click="showAddUserModal">新增</el-button>
-                    <el-button size="mini">分配权限</el-button>
+                    <el-button size="mini" @click="distributeRight">分配权限</el-button>
                 </div>
                 <el-table
                         :data="userTableData"
@@ -14,7 +15,8 @@
                         class="table"
                         ref="userTable"
                         header-cell-class-name="table-header"
-                        @selection-change="handleSelectionChange"
+                        @selection-change="selection => selectChange(selection, 'user')"
+                        @selection-all="selection => selectChange(selection, 'user')"
                         style="overflow: scroll"
                 >
                     <el-table-column type="selection" width="55" align="center"></el-table-column>
@@ -52,8 +54,8 @@
                             :current-page="userSearchData.pageNum"
                             :page-size="userSearchData.pageSize"
                             :total="userTableTotal"
-                            @current-change="handlePageChange"
-                            small="true"
+                            @current-change="handleUserPageChange"
+                            :small="true"
                     ></el-pagination>
                 </div>
             </el-col>
@@ -228,6 +230,25 @@
                 <el-button type="primary" @click="addUser">确 定</el-button>
             </div>
         </el-dialog>
+
+        <el-dialog title="分配权限" :visible.sync="showUserRightDistribute">
+            <el-form :model="userRightDistribute">
+                <el-form-item label="项目" :label-width="formLabelWidth">
+                    <el-select v-model="userRightDistribute.projectId" value="" placeholder="请选择" @change="projectChange">
+                        <el-option v-for=" item in projectTableData" :value="item.id" :label="item.name"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="模块" :label-width="formLabelWidth">
+                    <el-select v-model="userRightDistribute.modalIds" value="" multiple placeholder="请选择">
+                        <el-option v-for="item in projectTableData" :value="item.id" :label="item.name"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showUserAdd = false">取 消</el-button>
+                <el-button type="primary" @click="addUser">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -245,6 +266,7 @@
                     sortName: '',
                     sortType: ''
                 },
+                userSelection: [],
 
                 projectTableData: [],
                 projectTableTotal: 0,
@@ -277,11 +299,17 @@
                 },
 
                 showUserAdd: false,
+                showUserRightDistribute: false,
                 userAdd: {
                     username: '',
                     password: '',
                     nickname: '',
                     userType: '0'
+                },
+                userRightDistribute: {
+                    userId: '',
+                    projectId: '',
+                    modalIds: [],
                 }
             }
         },
@@ -301,9 +329,19 @@
             };
         },
         methods: {
+            flushData() {
+                this.queryUser()
+                this.queryProject()
+                this.queryModal()
+                this.queryMenu()
+            },
             queryUser() {
                 this.userLoading = true
-                this.API.queryUserList().then(res => {
+                let param = {
+                    pageNum: this.userSearchData.pageNum,
+                    pageSize: this.userSearchData.pageSize
+                }
+                this.API.queryUserList(param).then(res => {
                     if (res.code === '0') {
                         this.userTableData = res.rows
                         this.userTableTotal = res.total
@@ -341,11 +379,28 @@
                     }
                 })
             },
-            handlePageChange () {
+            distributeRight () {
+                if (this.userSelection.length !== 1) {
+                    this.$message.warning('请选择一个用户进行操作')
+                    return
+                }
+                this.showUserRightDistribute = !this.showUserRightDistribute
+            },
+            projectChange () {
 
+            },
+            handleUserPageChange(val) {
+                this.handlePageChange(val, 'user')
+            },
+            handlePageChange (num, type) {
+                this.$set(this[`${type}SearchData`], 'pageNum', num);
+                this.queryUser();
             },
             handleSelectionChange () {
 
+            },
+            selectChange(selection, type) {
+                this[`${type}Selection`] = selection
             },
             setTableHeight (finalHeight) {
                 finalHeight = finalHeight / 2 - 65;

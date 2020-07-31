@@ -2,6 +2,7 @@ package com.murongyehua.mrwb.base.service.modal;
 
 import com.murongyehua.mrwb.api.param.ModalParam;
 import com.murongyehua.mrwb.commom.PageView;
+import com.murongyehua.mrwb.commom.ResultContext;
 
 /**
  * @author liul
@@ -10,5 +11,7 @@ import com.murongyehua.mrwb.commom.PageView;
 public interface ModalService {
 
     PageView queryList(ModalParam param);
+
+    ResultContext getModalsByPorject(String projectId, String userId);
 
 }

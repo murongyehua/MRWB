@@ -1,11 +1,10 @@
 package com.murongyehua.mrwb.base.service.userright.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.murongyehua.mrwb.base.dao.mapper.BaseProjectInfoMapper;
-import com.murongyehua.mrwb.base.dao.mapper.BaseUserInfoMapper;
-import com.murongyehua.mrwb.base.dao.mapper.BaseUserRightMapper;
-import com.murongyehua.mrwb.base.dao.po.BaseProjectInfoPO;
-import com.murongyehua.mrwb.base.dao.po.BaseUserInfoPO;
+import cn.hutool.core.util.IdUtil;
+import com.murongyehua.mrwb.api.req.UserRightReq;
+import com.murongyehua.mrwb.base.dao.mapper.*;
+import com.murongyehua.mrwb.base.dao.po.*;
 import com.murongyehua.mrwb.base.service.userright.UserRightService;
 import com.murongyehua.mrwb.commom.ResultContext;
 import com.murongyehua.mrwb.commom.enums.ENUserType;
@@ -13,6 +12,7 @@ import com.murongyehua.mrwb.commom.user.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,6 +30,12 @@ public class UserRightServiceImpl implements UserRightService {
 
     @Autowired
     private BaseUserInfoMapper userInfoMapper;
+
+    @Autowired
+    private BaseModalInfoMapper modalInfoMapper;
+
+    @Autowired
+    private BaseModalInProjectMapper modalInProjectMapper;
 
     @Override
     public ResultContext getProjects() {
@@ -56,6 +62,50 @@ public class UserRightServiceImpl implements UserRightService {
         List<BaseUserInfoPO> list = userInfoMapper.selectByIds(userIds);
         resultContext.setData(list);
         return resultContext;
+    }
+
+    @Override
+    public ResultContext addUserRight(UserRightReq req) {
+        // 项目是否存在
+        BaseProjectInfoPO projectInfo = projectInfoMapper.selectByPrimaryKey(req.getProjectId());
+        if (projectInfo == null) {
+            return ResultContext.businessFail("项目不存在");
+        }
+        // 模块是否存在
+        BaseModalInfoPO modalInfo = modalInfoMapper.selectByPrimaryKey(req.getModalId());
+        if (modalInfo == null) {
+            return ResultContext.businessFail("项目不存在");
+        }
+        // 项目是否已开通模块
+        BaseModalInProjectPO modalInProjectParam = new BaseModalInProjectPO();
+        modalInProjectParam.setModalId(req.getModalId());
+        modalInProjectParam.setProjectId(req.getProjectId());
+        List<BaseModalInProjectPO> modalInProjects = modalInProjectMapper.selectBySelective(modalInProjectParam);
+        if (CollectionUtil.isEmpty(modalInProjects)) {
+            return ResultContext.businessFail("该项目未开通此模块");
+        }
+        // 用户是否存在
+        BaseUserInfoPO userInfo = userInfoMapper.selectByPrimaryKey(req.getUserId());
+        if (userInfo == null) {
+            return ResultContext.businessFail("用户不存在");
+        }
+        // 记录是否已存在
+        BaseUserRightPO userRightParam = new BaseUserRightPO();
+        userRightParam.setModalId(req.getModalId());
+        userRightParam.setProjectId(req.getProjectId());
+        userRightParam.setUserId(req.getUserId());
+        List<BaseUserRightPO> userRights = userRightMapper.selectBySelective(userRightParam);
+        if (CollectionUtil.isNotEmpty(userRights)) {
+            return ResultContext.businessFail("权限已分配，请勿重复操作");
+        }
+        userRightParam.setCreateTime(new Date());
+        userRightParam.setCreateUser(UserContext.getUserId());
+        userRightParam.setId(IdUtil.simpleUUID());
+        int count = userRightMapper.insert(userRightParam);
+        if (count != 1) {
+            return ResultContext.businessFail("操作失败");
+        }
+        return ResultContext.success("操作成功");
     }
 
 }

@@ -11,6 +11,8 @@
                         <p>优化：</p>
                         <p>1.页面超时体验优化</p>
                         <p>2.值班日志页面输入内容保留换行格式</p>
+                        <p>修复：</p>
+                        <p>1.值班日志历史修改记录只能显示一条的问题</p>
                     </el-card>
                 </el-timeline-item>
                 <el-timeline-item timestamp="2020/7/16" placement="top" color="#0bbd87">
