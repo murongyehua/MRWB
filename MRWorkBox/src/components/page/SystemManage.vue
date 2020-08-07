@@ -56,7 +56,7 @@
             <el-col :span="12">
                 <div>
                     <span>项目管理</span>
-                    <el-button size="mini">新增</el-button>
+                    <el-button size="mini" @click="showAddProjectModal">新增</el-button>
                     <el-button size="mini">开通模块</el-button>
                 </div>
                 <el-table
@@ -111,7 +111,7 @@
             <el-col :span="12">
                 <div>
                     <span>模块管理</span>
-                    <el-button size="mini">新增</el-button>
+                    <el-button size="mini" @click="showAddModalModal">新增</el-button>
                     <el-button size="mini">绑定菜单</el-button>
                 </div>
                 <el-table
@@ -164,7 +164,7 @@
             <el-col :span="12">
                 <div>
                     <span>菜单管理</span>
-                    <el-button size="mini">新增</el-button>
+                    <el-button size="mini" @click="showAddMenuModal">新增</el-button>
                 </div>
                 <el-table
                         :data="menuTableData"
@@ -177,7 +177,7 @@
                 >
                     <el-table-column type="selection" width="55" align="center"></el-table-column>
                     <el-table-column prop="index" label="ID" width="55" align="center"></el-table-column>
-                    <el-table-column prop="name" label="名称"></el-table-column>
+                    <el-table-column prop="title" label="名称"></el-table-column>
                     <el-table-column label="操作" width="120" align="center">
                         <template slot-scope="scope">
                             <el-button
@@ -224,7 +224,45 @@
                 <el-button type="primary" @click="addUser">确 定</el-button>
             </div>
         </el-dialog>
-
+        <el-dialog title="新增项目" :visible.sync="showProjectAdd">
+            <el-form :model="projectAdd">
+                <el-form-item label="项目名" :label-width="formLabelWidth">
+                    <el-input v-model="projectAdd.name" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showProjectAdd = false">取 消</el-button>
+                <el-button type="primary" @click="addProject">确 定</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog title="新增模块" :visible.sync="showModalAdd">
+            <el-form :model="modalAdd">
+                <el-form-item label="模块名" :label-width="formLabelWidth">
+                    <el-input v-model="modalAdd.modalName" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showModalAdd = false">取 消</el-button>
+                <el-button type="primary" @click="addModal">确 定</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog title="新增菜单" :visible.sync="showMenuAdd">
+            <el-form :model="menuAdd">
+                <el-form-item label="菜单名" :label-width="formLabelWidth">
+                    <el-input v-model="menuAdd.title" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="图标" :label-width="formLabelWidth">
+                    <el-input v-model="menuAdd.icon" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="前端路由" :label-width="formLabelWidth">
+                    <el-input v-model="menuAdd.routeIndex" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showMenuAdd = false">取 消</el-button>
+                <el-button type="primary" @click="addMenu">确 定</el-button>
+            </div>
+        </el-dialog>
         <el-dialog title="分配权限" :visible.sync="showUserRightDistribute">
             <el-form :model="userRightDistribute">
                 <el-form-item label="项目" :label-width="formLabelWidth">
@@ -281,7 +319,6 @@
                     sortName: '',
                     sortType: ''
                 },
-
                 menuTableData: [],
                 menuTableTotal: 0,
                 menuLoading: true,
@@ -305,9 +342,26 @@
                     projectId: '',
                     modalIds: [],
                 },
-                modalInProjects: []
+                modalInProjects: [],
+
+                showProjectAdd: false,
+                projectAdd: {
+                    name: ''
+                },
+
+                showModalAdd: false,
+                modalAdd: {
+                    modalName: ''
+                },
+                showMenuAdd: false,
+                menuAdd: {
+                    title: '',
+                    icon: '',
+                    routeIndex: ''
+                }
             }
         },
+
         mounted() {
             this.queryUser()
             this.queryProject()
@@ -366,7 +420,7 @@
             },
             queryMenu() {
                 this.menuLoading = true
-                this.API.queryModalList().then(res => {
+                this.API.queryMenuList().then(res => {
                     if (res.code === '0') {
                         this.menuTableData = res.rows
                         this.menuTableTotal = res.total
@@ -464,6 +518,49 @@
                         nickname: '',
                         userType: '0'
                 }
+            },
+            showAddProjectModal () {
+                this.showProjectAdd = true
+            },
+            addProject () {
+                this.showProjectAdd = false
+                this.API.addProject(this.projectAdd).then( res =>{
+                    if(res.code == 0){
+                        this.$message.info(res.info)
+                        this.queryProject()
+                    }
+                })
+                this.projectAdd = {
+                    projectname:''
+                }
+            },
+
+            showAddModalModal () {
+                this.showModalAdd = true
+            },
+            addModal () {
+                this.showModalAdd = false
+                this.API.addModal(this.modalAdd).then( res =>{
+                    if(res.code == 0) {
+                        this.$message.info(res.info)
+                        this.queryModal()
+                    }
+                })
+                this.modalAdd = {
+                    modalName : ''
+                }
+            },
+            showAddMenuModal () {
+                this.showMenuAdd = true
+            },
+            addMenu () {
+                this.showMenuAdd = false
+                this.API.addMenu(this.menuAdd).then(res => {
+                    if(res.code == 0) {
+                        this.$message.info(res.info)
+                        this.queryMenu()
+                    }
+                })
             }
         }
     }

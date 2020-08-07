@@ -4,9 +4,11 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.murongyehua.mrwb.api.param.ModalParam;
+import com.murongyehua.mrwb.api.req.ModalAddReq;
 import com.murongyehua.mrwb.api.req.ModalInProjectReq;
 import com.murongyehua.mrwb.api.resp.ModalListResp;
 import com.murongyehua.mrwb.api.resp.ProjectListResp;
@@ -22,10 +24,12 @@ import com.murongyehua.mrwb.base.service.modal.ModalService;
 import com.murongyehua.mrwb.commom.PageView;
 import com.murongyehua.mrwb.commom.ResultContext;
 import com.murongyehua.mrwb.commom.enums.ENCommonState;
+import com.murongyehua.mrwb.commom.user.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +61,25 @@ public class ModalServiceImpl implements ModalService {
         pageView.setTotal(pageInfo.getTotal());
         return pageView;
     }
+
+    public ResultContext addModal(ModalAddReq req){
+        if (isModalExist(req.getModalName())) {
+            return ResultContext.businessFail("模块已存在");
+        }
+        BaseModalInfoPO modalInfoPO = new BaseModalInfoPO();
+        modalInfoPO.setName(req.getModalName());
+        modalInfoPO.setId(IdUtil.simpleUUID());
+        modalInfoPO.setVersion(1);
+        modalInfoPO.setCreateUser(UserContext.getUserId());
+        modalInfoPO.setModalState(ENCommonState.ACTIVE.getValue());
+        modalInfoPO.setCreateTime(new Date());
+        int count = modalInfoMapper.insert(modalInfoPO);
+        if (count != 1) {
+            return ResultContext.businessFail("新增失败");
+        }
+        return ResultContext.success("新增成功");
+    }
+
 
     @Override
     public ResultContext getModalsByPorject(ModalInProjectReq req) {
@@ -97,5 +120,15 @@ public class ModalServiceImpl implements ModalService {
             num++;
         }
         return result;
+    }
+
+    private boolean isModalExist(String name) {
+        BaseModalInfoPO baseModalInfoPO = new BaseModalInfoPO();
+        baseModalInfoPO.setName(name);
+        List<BaseModalInfoPO> list = modalInfoMapper.selectBySelective(baseModalInfoPO);
+        if (CollectionUtil.isNotEmpty(list)) {
+            return true;
+        }
+        return false;
     }
 }

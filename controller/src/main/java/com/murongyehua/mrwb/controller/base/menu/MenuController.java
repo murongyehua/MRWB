@@ -1,6 +1,7 @@
 package com.murongyehua.mrwb.controller.base.menu;
 
 import com.murongyehua.mrwb.api.param.MenuParam;
+import com.murongyehua.mrwb.api.req.MenuAddReq;
 import com.murongyehua.mrwb.api.req.MenuGetReq;
 import com.murongyehua.mrwb.base.service.menu.MenuService;
 import com.murongyehua.mrwb.commom.PageView;
@@ -31,5 +32,11 @@ public class MenuController {
     @PostMapping("/query.smg")
     public PageView query(MenuParam param) {
         return menuService.queryList(param);
+    }
+
+
+    @PostMapping("/add.smg")
+    public ResultContext addModal(MenuAddReq req){
+        return menuService.addMenu(req);
     }
 }
