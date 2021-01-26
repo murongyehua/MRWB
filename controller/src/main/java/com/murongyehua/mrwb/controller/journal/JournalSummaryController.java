@@ -69,6 +69,7 @@ public class JournalSummaryController {
             outputStream.write(buffer);
             outputStream.flush();
             outputStream.close();
+            FileUtil.del(filePath);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
