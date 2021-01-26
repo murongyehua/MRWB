@@ -25,4 +25,6 @@ public interface JournalSummaryService {
 
     ResultContext delete(JournalSummaryReq deleteReq);
 
+    String export(JournalSummaryParam param);
+
 }

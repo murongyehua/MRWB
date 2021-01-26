@@ -4,8 +4,11 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.murongyehua.mrwb.api.param.journal.JournalSummaryParam;
@@ -29,13 +32,12 @@ import com.murongyehua.mrwb.journal.dao.po.JournalFieldPO;
 import com.murongyehua.mrwb.journal.dao.po.JournalSummaryPO;
 import com.murongyehua.mrwb.journal.service.JournalSummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -59,6 +61,9 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
 
     @Autowired
     private JournalTagMapper tagMapper;
+
+    @Value("${export.path}")
+    private String exportPath;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -167,6 +172,46 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
             throw new MRBaseException("删除异常");
         }
         return ResultContext.success("操作成功");
+    }
+
+    @Override
+    public String export(JournalSummaryParam param) {
+        List<JournalFieldPO> list = fieldMapper.selectByProject(UserContext.getProjectId());
+        String filePath = exportPath + File.separator + "导出" + System.currentTimeMillis() + ".xlsx";
+        ExcelWriter writer = ExcelUtil.getWriter(FileUtil.file(filePath));
+        PageHelper.startPage(param.getPageNum(), param.getPageSize(), param.getOrderBy());
+        List<JournalSummaryQueryResp> resps = this.getRespList(summaryMapper.query(param), false);
+        Map<String, String> fieldMap = this.field2Map(list);
+        List<Map<String, String>> rows = this.getExcelMapList(fieldMap, resps);
+        writer.write(rows);
+        writer.close();
+        return filePath;
+    }
+
+    private List<Map<String, String>> getExcelMapList(Map<String, String> fieldMap, List<JournalSummaryQueryResp> resps) {
+        List<Map<String, String>> resultList = new LinkedList<>();
+        resps.forEach(resp -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("标题", resp.getTitle());
+            Map<String, String> contentMap = resp.getContents().stream().sorted(Comparator.comparingInt(JournalFieldContentResp::getSortNum))
+                    .collect(Collectors.toMap(x -> {return x.getFieldId();}, JournalFieldContentResp::getContent));
+            for (String fieldId : contentMap.keySet()) {
+                map.put(fieldMap.get(fieldId), contentMap.get(fieldId));
+            }
+            map.put("分类", resp.getTagText());
+            map.put("处理时间", resp.getDealDate());
+            map.put("处理人", resp.getDealUserText());
+            resultList.add(map);
+        });
+        return resultList;
+    }
+
+    private Map<String, String> field2Map(List<JournalFieldPO> fields) {
+        Map<String, String> map = new HashMap<>(fields.size());
+        fields.forEach(x -> {
+            map.put(x.getId(), x.getFieldName());
+        });
+        return map;
     }
 
 

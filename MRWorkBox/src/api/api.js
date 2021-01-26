@@ -55,7 +55,7 @@ const modal = {
 
 const menu = {
     queryMenuList (param) {
-        return post(url + '/base/menu.query.smg', param)
+        return post(url + '/base/menu/query.smg', param)
     }
 }
 
@@ -89,6 +89,9 @@ const journal = {
     },
     deleteJournalSummary (param) {
         return jsonPost(url + '/journal/summary/delete.do', param)
+    },
+    exportJournalSummaryURL (param) {
+        return postBlob(url + '/journal/summary/export.pub', param)
     }
 }
 

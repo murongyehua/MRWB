@@ -366,7 +366,7 @@
             },
             queryMenu() {
                 this.menuLoading = true
-                this.API.queryModalList().then(res => {
+                this.API.queryMenuList().then(res => {
                     if (res.code === '0') {
                         this.menuTableData = res.rows
                         this.menuTableTotal = res.total

@@ -234,7 +234,7 @@
                 })
             },
             projectChange() {
-                bus.$emit('flushMenu', this.checkedProject.id)
+                bus.$emit('flushMenu', this.checkedProject)
             }
         },
         mounted() {
