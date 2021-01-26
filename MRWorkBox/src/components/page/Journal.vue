@@ -106,6 +106,13 @@
             </el-button>
             <el-button
                     type="primary"
+                    icon="el-icon-upload2"
+                    class="handle-del mr8"
+                    @click="exportData"
+            >导出
+            </el-button>
+            <el-button
+                    type="danger"
                     icon="el-icon-delete"
                     class="handle-del mr8"
                     @click="delAllSelection"
@@ -185,17 +192,17 @@
                     <div slot="header" class="clearfix">
                         <span class="card">{{item.title}}</span>
                         <!--<el-button-->
-                                <!--type="text"-->
-                                <!--icon="el-icon-edit"-->
-                                <!--style="float: right; padding: 3px 0"-->
-                                <!--@click="handleEdit(scope.$index, scope.row)"-->
+                        <!--type="text"-->
+                        <!--icon="el-icon-edit"-->
+                        <!--style="float: right; padding: 3px 0"-->
+                        <!--@click="handleEdit(scope.$index, scope.row)"-->
                         <!--&gt;编辑-->
                         <!--</el-button>-->
                         <!--<el-button-->
-                                <!--type="text"-->
-                                <!--icon="el-icon-notebook-2"-->
-                                <!--style="float: right; padding: 3px 0"-->
-                                <!--@click="showHistory(scope.$index, scope.row)"-->
+                        <!--type="text"-->
+                        <!--icon="el-icon-notebook-2"-->
+                        <!--style="float: right; padding: 3px 0"-->
+                        <!--@click="showHistory(scope.$index, scope.row)"-->
                         <!--&gt;查看历史-->
                         <!--</el-button>-->
                     </div>
@@ -289,7 +296,7 @@
         <el-dialog :title="tagShowTitle" :visible.sync="addTagVisible" width="30%" :close-on-click-modal="false"
                    :destroy-on-close="true">
             <el-form ref="form" :model="form" label-width="70px">
-                    <el-form-item label="分类名称">
+                <el-form-item label="分类名称">
                     <el-input v-model="tagData.tagName"></el-input>
                 </el-form-item>
             </el-form>
@@ -382,6 +389,7 @@
             this.getData();
         },
         mounted() {
+            this.query.dealDate = [this.getMonday(new Date()), new Date()]
             this.getFields();
             this.queryTags();
             this.queryUsers();
@@ -510,6 +518,36 @@
                     .catch(() => {
                     });
             },
+            exportData() {
+                this.$confirm('确定要导出吗？', '提示', {
+                    type: 'warning'
+                })
+                    .then(() => {
+                        let param = {
+                            dealDateStart: this.global.dateFormat('yyyy-MM-dd', this.query.dealDate[0]),
+                            dealDateEnd: this.global.dateFormat('yyyy-MM-dd', this.query.dealDate[1]),
+                            dealUser: this.query.dealUser,
+                            tag: this.query.tag,
+                            titleLike: this.query.titleLike,
+                            pageSize: 10000,
+                            pageNum: 1,
+                            sortName: 'last_modify_time',
+                            sortType: 'desc'
+                        }
+                        this.API.exportJournalSummaryURL(param).then(res => {
+                            const elink = document.createElement("a");
+                            elink.download = '导出.xlsx';
+                            elink.style.display = "none";
+                            elink.href = URL.createObjectURL(res);
+                            document.body.appendChild(elink);
+                            elink.click();
+                            URL.revokeObjectURL(elink.href);
+                            document.body.removeChild(elink);
+                        })
+                    })
+                    .catch(() => {
+                    });
+            },
             changeView() {
                 this.tableView = !this.tableView
             },
@@ -608,7 +646,7 @@
                         }
                     })
                 } else {
-                    this.API.editJournalTag({name: this.tagData.tagName, id:this.tagData.id}).then(res => {
+                    this.API.editJournalTag({name: this.tagData.tagName, id: this.tagData.id}).then(res => {
                         if (res.code === '0') {
                             this.$message.success(res.info)
                             this.addTagVisible = false
@@ -632,6 +670,21 @@
                 this.API.getJournalFields().then(res => {
                     this.tableFields = res.data
                 })
+            },
+            // 获取周一
+            getMonday(date) {
+                let day = date.getDay();
+                let deltaDay;
+                if (day === 0) {
+                    deltaDay = 6;
+                } else {
+                    deltaDay = day - 1;
+                }
+                let monday = new Date(date.getTime() - deltaDay * 24 * 60 * 60 * 1000);
+                monday.setHours(0);
+                monday.setMinutes(0);
+                monday.setSeconds(0);
+                return monday;  //返回本周的周一的0时0分0秒
             }
         }
     };
@@ -646,7 +699,7 @@
         width: 120px;
     }
 
-    .el-drawer.rtl{
+    .el-drawer.rtl {
         overflow: auto;
     }
 

@@ -41,18 +41,12 @@ const right = {
 const project = {
     queryProjectList (param) {
         return post(url + '/base/project/query.pub', param)
-    },
-    addProject(param) {
-        return post(url + '/base/project/add.smg',param)
     }
 }
 
 const modal = {
     queryModalList (param) {
         return post(url + '/base/modal/query.smg', param)
-    },
-    addModal(param) {
-        return post(url + '/base/modal/add.smg',param)
     },
     getModalsByProject (param){
         return post(url + '/base/modal/getModalsByProject.smg', param)
@@ -62,9 +56,6 @@ const modal = {
 const menu = {
     queryMenuList (param) {
         return post(url + '/base/menu/query.smg', param)
-    },
-    addMenu(param) {
-        return post(url+ '/base/menu/add.smg',param)
     }
 }
 
@@ -98,6 +89,9 @@ const journal = {
     },
     deleteJournalSummary (param) {
         return jsonPost(url + '/journal/summary/delete.do', param)
+    },
+    exportJournalSummaryURL (param) {
+        return postBlob(url + '/journal/summary/export.pub', param)
     }
 }
 
