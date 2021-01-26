@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mrwb</artifactId>
         <groupId>com.murongyehua</groupId>
-        <version>1.0.3</version>
+        <version>1.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,17 +15,17 @@
         <dependency>
             <groupId>com.murongyehua</groupId>
             <artifactId>commom</artifactId>
-            <version>1.0.3</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.murongyehua</groupId>
             <artifactId>api</artifactId>
-            <version>1.0.3</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.murongyehua</groupId>
             <artifactId>base</artifactId>
-            <version>1.0.3</version>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
 
