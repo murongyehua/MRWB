@@ -4,10 +4,13 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.murongyehua.mrwb.api.param.MenuParam;
+import com.murongyehua.mrwb.api.req.MenuAddReq;
 import com.murongyehua.mrwb.api.req.MenuGetReq;
+import com.murongyehua.mrwb.api.req.ModalAddReq;
 import com.murongyehua.mrwb.api.resp.MenuListResp;
 import com.murongyehua.mrwb.api.resp.ModalListResp;
 import com.murongyehua.mrwb.base.dao.mapper.BaseMenuMapper;
@@ -28,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,6 +97,22 @@ public class MenuServiceImpl implements MenuService {
         return pageView;
     }
 
+    public ResultContext addMenu (MenuAddReq req){
+        if (isMenuExist(req.getTitle())) {
+            return ResultContext.businessFail("菜单已存在");
+        }
+        BaseMenuPO menuPO = new BaseMenuPO();
+        menuPO.setTitle(req.getTitle());
+        menuPO.setId(IdUtil.simpleUUID());
+        menuPO.setIcon(req.getIcon());
+        menuPO.setRouteIndex(req.getRouteIndex());
+        int count = menuMapper.insert(menuPO);
+        if (count != 1) {
+            return ResultContext.businessFail("新增失败");
+        }
+        return ResultContext.success("新增成功");
+    }
+
     private List<MenuListResp> translate(List<BaseMenuPO> list) {
         List<MenuListResp> result = new ArrayList<>();
         int num = 1;
@@ -104,6 +124,16 @@ public class MenuServiceImpl implements MenuService {
             num++;
         }
         return result;
+    }
+
+    private boolean isMenuExist(String title) {
+        BaseMenuPO baseMenuPO = new BaseMenuPO();
+        baseMenuPO.setTitle(title);
+        List<BaseMenuPO> list = menuMapper.selectBySelective(baseMenuPO);
+        if (CollectionUtil.isNotEmpty(list)) {
+            return true;
+        }
+        return false;
     }
 
 }

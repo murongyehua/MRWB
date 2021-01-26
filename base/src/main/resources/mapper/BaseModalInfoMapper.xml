@@ -116,4 +116,12 @@
       </if>
     </where>
   </select>
+  <select id="selectByIds" resultMap="BaseResultMap" parameterType="java.util.List">
+    select
+    <include refid="Base_Column_List"/>
+    from base_modal_info where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.murongyehua.mrwb.base.dao.mapper;
 
 import com.murongyehua.mrwb.base.dao.po.BaseModalInfoPO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface BaseModalInfoMapper {
     int updateByPrimaryKey(BaseModalInfoPO record);
 
     List<BaseModalInfoPO> selectBySelective(BaseModalInfoPO record);
+
+    List<BaseModalInfoPO> selectByIds(@Param("ids") List<String> ids);
 }

@@ -90,4 +90,22 @@
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <select id="selectBySelective" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from base_modal_in_project
+    <where>
+      <if test="projectId != null">
+        project_id = #{projectId,jdbcType=VARCHAR}
+      </if>
+      <if test="modalId != null">
+        and modal_id = #{modalId,jdbcType=VARCHAR}
+      </if>
+      <if test="createUser != null">
+        and create_user = #{createUser,jdbcType=VARCHAR}
+      </if>
+      <if test="createTime != null">
+        and create_time = #{createTime,jdbcType=TIMESTAMP}
+      </if>
+    </where>
+  </select>
 </mapper>

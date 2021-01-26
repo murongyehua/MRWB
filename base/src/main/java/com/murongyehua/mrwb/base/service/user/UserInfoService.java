@@ -23,4 +23,6 @@ public interface UserInfoService {
 
     PageView queryUserList(UserListParam param);
 
+    ResultContext resetPassword(String userId);
+
 }

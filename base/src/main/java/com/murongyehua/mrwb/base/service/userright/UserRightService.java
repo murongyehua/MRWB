@@ -1,5 +1,6 @@
 package com.murongyehua.mrwb.base.service.userright;
 
+import com.murongyehua.mrwb.api.req.UserRightReq;
 import com.murongyehua.mrwb.commom.ResultContext;
 
 /**
@@ -11,4 +12,6 @@ public interface UserRightService {
     ResultContext getProjects();
 
     ResultContext getUsers();
+
+    ResultContext addUserRight(UserRightReq req);
 }

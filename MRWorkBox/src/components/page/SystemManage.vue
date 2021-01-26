@@ -1,10 +1,13 @@
 <template>
     <div>
     <div ref="tableWrap">
+        <el-button size="mini" type="primary" @click="flushData">刷新数据</el-button>
         <el-row :gutter="5">
             <el-col :span="12">
                 <div>
+                    <span>用户管理</span>
                     <el-button size="mini" @click="showAddUserModal">新增</el-button>
+                    <el-button size="mini" @click="distributeRight">分配权限</el-button>
                 </div>
                 <el-table
                         :data="userTableData"
@@ -12,7 +15,9 @@
                         class="table"
                         ref="userTable"
                         header-cell-class-name="table-header"
-                        @selection-change="handleSelectionChange"
+                        @selection-change="selection => selectChange(selection, 'user')"
+                        @selection-all="selection => selectChange(selection, 'user')"
+                        style="overflow: scroll"
                 >
                     <el-table-column type="selection" width="55" align="center"></el-table-column>
                     <el-table-column prop="index" label="ID" width="55" align="center"></el-table-column>
@@ -30,15 +35,9 @@
                         <template slot-scope="scope">
                             <el-button
                                     type="text"
-                                    icon="el-icon-edit"
-                                    @click="handleEdit(scope.$index, scope.row)"
-                            >编辑</el-button>
-                            <el-button
-                                    type="text"
-                                    icon="el-icon-delete"
-                                    class="red"
-                                    @click="showHistory(scope.$index, scope.row)"
-                            >删除</el-button>
+                                    icon="el-icon-refresh-right"
+                                    @click="resetPassword(scope.$index, scope.row)"
+                            >重置密码</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -49,14 +48,16 @@
                             :current-page="userSearchData.pageNum"
                             :page-size="userSearchData.pageSize"
                             :total="userTableTotal"
-                            @current-change="handlePageChange"
-                            small="true"
+                            @current-change="handleUserPageChange"
+                            :small="true"
                     ></el-pagination>
                 </div>
             </el-col>
             <el-col :span="12">
                 <div>
-                    <el-button size="mini">新增</el-button>
+                    <span>项目管理</span>
+                    <el-button size="mini" @click="showAddProjectModal">新增</el-button>
+                    <el-button size="mini">开通模块</el-button>
                 </div>
                 <el-table
                         :data="projectTableData"
@@ -65,6 +66,7 @@
                         ref="projectTable"
                         header-cell-class-name="table-header"
                         @selection-change="handleSelectionChange"
+                        style="overflow: scroll"
                 >
                     <el-table-column type="selection" width="55" align="center"></el-table-column>
                     <el-table-column prop="index" label="ID" width="55" align="center"></el-table-column>
@@ -108,7 +110,9 @@
         <el-row :gutter="5">
             <el-col :span="12">
                 <div>
-                    <el-button size="mini">新增</el-button>
+                    <span>模块管理</span>
+                    <el-button size="mini" @click="showAddModalModal">新增</el-button>
+                    <el-button size="mini">绑定菜单</el-button>
                 </div>
                 <el-table
                         :data="modalTableData"
@@ -117,6 +121,7 @@
                         ref="modalTable"
                         header-cell-class-name="table-header"
                         @selection-change="handleSelectionChange"
+                        style="overflow: scroll"
                 >
                     <el-table-column type="selection" width="55" align="center"></el-table-column>
                     <el-table-column prop="index" label="ID" width="55" align="center"></el-table-column>
@@ -158,7 +163,8 @@
             </el-col>
             <el-col :span="12">
                 <div>
-                    <el-button size="mini">新增</el-button>
+                    <span>菜单管理</span>
+                    <el-button size="mini" @click="showAddMenuModal">新增</el-button>
                 </div>
                 <el-table
                         :data="menuTableData"
@@ -167,10 +173,11 @@
                         ref="menuTable"
                         header-cell-class-name="table-header"
                         @selection-change="handleSelectionChange"
+                        style="overflow: scroll"
                 >
                     <el-table-column type="selection" width="55" align="center"></el-table-column>
                     <el-table-column prop="index" label="ID" width="55" align="center"></el-table-column>
-                    <el-table-column prop="name" label="名称"></el-table-column>
+                    <el-table-column prop="title" label="名称"></el-table-column>
                     <el-table-column label="操作" width="120" align="center">
                         <template slot-scope="scope">
                             <el-button
@@ -217,6 +224,63 @@
                 <el-button type="primary" @click="addUser">确 定</el-button>
             </div>
         </el-dialog>
+        <el-dialog title="新增项目" :visible.sync="showProjectAdd">
+            <el-form :model="projectAdd">
+                <el-form-item label="项目名" :label-width="formLabelWidth">
+                    <el-input v-model="projectAdd.name" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showProjectAdd = false">取 消</el-button>
+                <el-button type="primary" @click="addProject">确 定</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog title="新增模块" :visible.sync="showModalAdd">
+            <el-form :model="modalAdd">
+                <el-form-item label="模块名" :label-width="formLabelWidth">
+                    <el-input v-model="modalAdd.modalName" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showModalAdd = false">取 消</el-button>
+                <el-button type="primary" @click="addModal">确 定</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog title="新增菜单" :visible.sync="showMenuAdd">
+            <el-form :model="menuAdd">
+                <el-form-item label="菜单名" :label-width="formLabelWidth">
+                    <el-input v-model="menuAdd.title" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="图标" :label-width="formLabelWidth">
+                    <el-input v-model="menuAdd.icon" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="前端路由" :label-width="formLabelWidth">
+                    <el-input v-model="menuAdd.routeIndex" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showMenuAdd = false">取 消</el-button>
+                <el-button type="primary" @click="addMenu">确 定</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog title="分配权限" :visible.sync="showUserRightDistribute">
+            <el-form :model="userRightDistribute">
+                <el-form-item label="项目" :label-width="formLabelWidth">
+                    <el-select v-model="userRightDistribute.projectId" value="" placeholder="请选择" @visible-change="projectChange">
+                        <el-option v-for=" item in projectTableData" :value="item.id" :label="item.name"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="模块" :label-width="formLabelWidth">
+                    <el-select v-model="userRightDistribute.modalIds" value="" multiple placeholder="请选择">
+                        <el-option v-for="item in modalInProjects" :value="item.id" :label="item.name"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showUserRightDistribute = false">取 消</el-button>
+                <el-button type="primary" @click="addUserRight">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -230,10 +294,11 @@
                 userLoading: true,
                 userSearchData: {
                     pageNum: 1,
-                    pageSize: 20,
+                    pageSize: 10,
                     sortName: '',
                     sortType: ''
                 },
+                userSelection: [],
 
                 projectTableData: [],
                 projectTableTotal: 0,
@@ -254,7 +319,6 @@
                     sortName: '',
                     sortType: ''
                 },
-
                 menuTableData: [],
                 menuTableTotal: 0,
                 menuLoading: true,
@@ -266,14 +330,38 @@
                 },
 
                 showUserAdd: false,
+                showUserRightDistribute: false,
                 userAdd: {
                     username: '',
                     password: '',
                     nickname: '',
                     userType: '0'
+                },
+                userRightDistribute: {
+                    userId: '',
+                    projectId: '',
+                    modalIds: [],
+                },
+                modalInProjects: [],
+
+                showProjectAdd: false,
+                projectAdd: {
+                    name: ''
+                },
+
+                showModalAdd: false,
+                modalAdd: {
+                    modalName: ''
+                },
+                showMenuAdd: false,
+                menuAdd: {
+                    title: '',
+                    icon: '',
+                    routeIndex: ''
                 }
             }
         },
+
         mounted() {
             this.queryUser()
             this.queryProject()
@@ -290,9 +378,19 @@
             };
         },
         methods: {
+            flushData() {
+                this.queryUser()
+                this.queryProject()
+                this.queryModal()
+                this.queryMenu()
+            },
             queryUser() {
                 this.userLoading = true
-                this.API.queryUserList().then(res => {
+                let param = {
+                    pageNum: this.userSearchData.pageNum,
+                    pageSize: this.userSearchData.pageSize
+                }
+                this.API.queryUserList(param).then(res => {
                     if (res.code === '0') {
                         this.userTableData = res.rows
                         this.userTableTotal = res.total
@@ -322,7 +420,7 @@
             },
             queryMenu() {
                 this.menuLoading = true
-                this.API.queryModalList().then(res => {
+                this.API.queryMenuList().then(res => {
                     if (res.code === '0') {
                         this.menuTableData = res.rows
                         this.menuTableTotal = res.total
@@ -330,11 +428,71 @@
                     }
                 })
             },
-            handlePageChange () {
-
+            distributeRight () {
+                if (this.userSelection.length !== 1) {
+                    this.$message.warning('请选择一个用户进行操作')
+                    return
+                }
+                this.userRightDistribute.userId = this.userSelection[0].id
+                this.userRightDistribute.projectId = this.projectTableData.length > 0 ? this.projectTableData[0].id : ''
+                this.showUserRightDistribute = !this.showUserRightDistribute
+                this.projectChange()
+            },
+            projectChange () {
+                this.userRightDistribute.modalIds = []
+                let param = {
+                    projectId: this.userRightDistribute.projectId,
+                    userId: this.userRightDistribute.userId
+                }
+                this.API.getModalsByProject(param).then(res => {
+                    if (res.code === '0') {
+                        this.modalInProjects = res.data.modalInfos
+                        this.userRightDistribute.modalIds = res.data.distributedModalIds
+                    }
+                })
+            },
+            addUserRight () {
+                if (!this.userRightDistribute.projectId || this.userRightDistribute.projectId.length === 0) {
+                    this.$message.warning('项目不能为空')
+                    return
+                }
+                this.API.addUserRight(this.userRightDistribute).then(res => {
+                    if (res.code === '0') {
+                        this.$message.success(res.info)
+                        this.userRightDistribute = {
+                            projectId: '',
+                            modalIds: '',
+                            userId: ''
+                        }
+                        this.showUserRightDistribute = !this.showUserRightDistribute
+                    }
+                })
+            },
+            resetPassword (index, row) {
+                this.$confirm('确认要重置用户【' + row.nickname + '】的密码？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.API.resetPassword({userId: row.id}).then(res => {
+                        if (res.code === '0') {
+                            this.$message.success(res.info)
+                        }
+                    })
+                })
+            },
+            handleUserPageChange(val) {
+                this.handlePageChange(val, 'user')
+            },
+            handlePageChange (num, type) {
+                this.$set(this[`${type}SearchData`], 'pageNum', num);
+                this.queryUser();
             },
             handleSelectionChange () {
 
+            },
+            selectChange(selection, type) {
+                this[`${type}Selection`] = selection
             },
             setTableHeight (finalHeight) {
                 finalHeight = finalHeight / 2 - 65;
@@ -349,7 +507,59 @@
             addUser () {
                 this.showUserAdd = false
                 this.API.addUser(this.userAdd).then(res =>{
-                    this.$message.info(res.info)
+                    if (res.code === '0') {
+                        this.$message.info(res.info)
+                        this.queryUser()
+                    }
+                })
+                this.userAdd = {
+                        username: '',
+                        password: '',
+                        nickname: '',
+                        userType: '0'
+                }
+            },
+            showAddProjectModal () {
+                this.showProjectAdd = true
+            },
+            addProject () {
+                this.showProjectAdd = false
+                this.API.addProject(this.projectAdd).then( res =>{
+                    if(res.code == 0){
+                        this.$message.info(res.info)
+                        this.queryProject()
+                    }
+                })
+                this.projectAdd = {
+                    projectname:''
+                }
+            },
+
+            showAddModalModal () {
+                this.showModalAdd = true
+            },
+            addModal () {
+                this.showModalAdd = false
+                this.API.addModal(this.modalAdd).then( res =>{
+                    if(res.code == 0) {
+                        this.$message.info(res.info)
+                        this.queryModal()
+                    }
+                })
+                this.modalAdd = {
+                    modalName : ''
+                }
+            },
+            showAddMenuModal () {
+                this.showMenuAdd = true
+            },
+            addMenu () {
+                this.showMenuAdd = false
+                this.API.addMenu(this.menuAdd).then(res => {
+                    if(res.code == 0) {
+                        this.$message.info(res.info)
+                        this.queryMenu()
+                    }
                 })
             }
         }

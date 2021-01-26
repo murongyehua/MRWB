@@ -1,5 +1,6 @@
 package com.murongyehua.mrwb.controller.base.userright;
 
+import com.murongyehua.mrwb.api.req.UserRightReq;
 import com.murongyehua.mrwb.base.service.userright.UserRightService;
 import com.murongyehua.mrwb.commom.ResultContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,10 @@ public class UserRightController {
     @PostMapping("/getUsers.do")
     public ResultContext getUsers() {
         return userRightService.getUsers();
+    }
+
+    @PostMapping("/addUserRight.smg")
+    public ResultContext addUserRight(UserRightReq req) {
+        return userRightService.addUserRight(req);
     }
 }

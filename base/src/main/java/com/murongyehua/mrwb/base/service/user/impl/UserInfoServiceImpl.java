@@ -108,13 +108,23 @@ public class UserInfoServiceImpl implements UserInfoService {
         BaseUserInfoPO userInfoPO = new BaseUserInfoPO();
         BeanUtil.copyProperties(param, userInfoPO);
         PageHelper.startPage(param.getPageNum(), param.getPageSize(), param.getOrderBy());
-        List<BaseUserInfoPO> list = userInfoMapper.selectBySelective(userInfoPO);
-        PageInfo pageInfo = new PageInfo(this.translate(list));
+        PageInfo pageInfo = new PageInfo(userInfoMapper.selectBySelective(userInfoPO));
         PageView pageView = new PageView();
         BeanUtil.copyProperties(ResultContext.success("操作成功"), pageView);
-        pageView.setRows(pageInfo.getList());
+        pageView.setRows(this.translate(pageInfo.getList()));
         pageView.setTotal(pageInfo.getTotal());
         return pageView;
+    }
+
+    @Override
+    public ResultContext resetPassword(String userId) {
+        BaseUserInfoPO userInfo = userInfoMapper.selectByPrimaryKey(userId);
+        if (userInfo == null) {
+            return ResultContext.businessFail("用户不存在");
+        }
+        userInfo.setPassword(DigestUtil.md5Hex(userInfo.getUsername() + "123"));
+        userInfoMapper.updateByPrimaryKey(userInfo);
+        return ResultContext.success("操作成功");
     }
 
     private List<UserListResp> translate(List<BaseUserInfoPO> list) {
