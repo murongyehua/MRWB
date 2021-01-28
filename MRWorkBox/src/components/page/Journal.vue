@@ -63,7 +63,7 @@
                                          align="left" show-overflow-tooltip></el-table-column>
                         <el-table-column label="处理时间" prop="dealDate" show-overflow-tooltip></el-table-column>
                         <el-table-column label="处理人" prop="dealUserText" show-overflow-tooltip></el-table-column>
-                        <el-table-column label="修改时间" prop="lastModifyTimeText" show-overflow-tooltip></el-table-column>
+                        <el-table-column label="修改时间" prop="createTimeText" show-overflow-tooltip></el-table-column>
                         <el-table-column label="修改人" prop="lastModifyUserText" show-overflow-tooltip></el-table-column>
                     </el-table>
                 </el-drawer>
@@ -393,6 +393,7 @@
             this.getFields();
             this.queryTags();
             this.queryUsers();
+            this.getData();
         },
         methods: {
             // 获取表格数据
