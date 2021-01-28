@@ -1,6 +1,14 @@
 <template>
     <div style="margin-left: 30%; width: 40%; margin-top: 100px; height: 750px; overflow: auto">
         <el-timeline>
+            <el-timeline-item timestamp="2021/1/28" placement="top" color="#0bbd87">
+                <el-card>
+                    <h4>版本1.1.1发布</h4>
+                    <p>优化：</p>
+                    <p>1.修复进入值班日志页面后不会自动查询的问题</p>
+                    <p>2.修复值班日志查看修改历史只能看到最近一次修改的问题</p>
+                </el-card>
+            </el-timeline-item>
             <el-timeline-item timestamp="2021/1/26" placement="top" color="#0bbd87">
                 <el-card>
                     <h4>版本1.1.0发布</h4>

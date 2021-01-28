@@ -133,15 +133,16 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
         ResultContext resultContext = this.addSummary(editReq, false);
         if (ENMsgCode.SUCCESS.getValue().equals(resultContext.getCode())) {
             // 把原本的记录改为历史版本
-            JournalSummaryPO summary = new JournalSummaryPO();
-            summary.setId(editReq.getId());
-            summary.setState(ENJournalState.HISTORY.getValue());
-            summary.setLastModifyTime(new Date());
-            summary.setHistoryForId(resultContext.getData().toString());
-            summary.setLastModifyUser(UserContext.getUserId());
-            int edit = summaryMapper.updateByPrimaryKeySelective(summary);
-            if (edit != 1) {
-                throw new MRBaseException("修改失败");
+            this.update2History(editReq.getId(), resultContext.getData().toString());
+            // 如果存在原记录的历史历史记录，也需要改
+            JournalSummaryPO param = new JournalSummaryPO();
+            param.setHistoryForId(editReq.getId());
+            param.setState(ENJournalState.HISTORY.getValue());
+            List<JournalSummaryPO> list = summaryMapper.selectBySelective(param);
+            if (CollectionUtil.isNotEmpty(list)) {
+                list.forEach(x -> {
+                    this.update2History(x.getId(), resultContext.getData().toString());
+                });
             }
         }
         return ResultContext.success("操作成功");
@@ -152,7 +153,7 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
         JournalSummaryPO summaryPO = new JournalSummaryPO();
         summaryPO.setHistoryForId(summaryId);
         summaryPO.setState(ENJournalState.HISTORY.getValue());
-        PageHelper.startPage(1, 100, "last_modify_time desc");
+        PageHelper.startPage(1, 100, "create_time desc");
         List<JournalSummaryPO> summarys = summaryMapper.selectBySelective(summaryPO);
         PageView pageView = new PageView();
         pageView.setCode(ENMsgCode.SUCCESS.getValue());
@@ -186,6 +187,19 @@ public class JournalSummaryServiceImpl implements JournalSummaryService {
         writer.write(rows);
         writer.close();
         return filePath;
+    }
+
+    private void update2History(String id, String history) {
+        JournalSummaryPO summary = new JournalSummaryPO();
+        summary.setId(id);
+        summary.setState(ENJournalState.HISTORY.getValue());
+        summary.setLastModifyTime(new Date());
+        summary.setHistoryForId(history);
+        summary.setLastModifyUser(UserContext.getUserId());
+        int edit = summaryMapper.updateByPrimaryKeySelective(summary);
+        if (edit != 1) {
+            throw new MRBaseException("修改失败");
+        }
     }
 
     private List<Map<String, String>> getExcelMapList(Map<String, String> fieldMap, List<JournalSummaryQueryResp> resps) {
